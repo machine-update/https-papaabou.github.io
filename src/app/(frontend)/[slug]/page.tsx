@@ -55,8 +55,15 @@ export default async function Page({ params: paramsPromise }: Args) {
     slug: decodedSlug,
   })
 
-  // Remove this code once your website is seeded
-  if (!page && slug === 'home') {
+  // Force a brand-safe home fallback when DB still contains template seed content.
+  const isTemplateHome =
+    slug === 'home' &&
+    page &&
+    (page?.meta?.title === 'Payload Website Template' ||
+      page?.title === 'Home' ||
+      page?.meta?.description?.includes('open-source website built with Payload'))
+
+  if (!page || isTemplateHome) {
     page = homeStatic
   }
 
@@ -67,7 +74,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
 
   return (
-    <article className="pt-16 pb-24">
+    <article className="pt-24 md:pt-28 pb-28 md:pb-36">
       <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

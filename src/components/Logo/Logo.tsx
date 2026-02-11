@@ -1,3 +1,5 @@
+'use client'
+
 import clsx from 'clsx'
 import React from 'react'
 
@@ -8,22 +10,30 @@ interface Props {
 }
 
 export const Logo = (props: Props) => {
-  const { loading: loadingFromProps, priority: priorityFromProps, className } = props
+  const { className, loading = 'lazy', priority = 'low' } = props
+  const [hasError, setHasError] = React.useState(false)
 
-  const loading = loadingFromProps || 'lazy'
-  const priority = priorityFromProps || 'low'
+  if (hasError) {
+    return (
+      <span className={clsx('text-sm tracking-[0.2em] uppercase text-xks-gold font-semibold', className)}>
+        XKSGROUP
+      </span>
+    )
+  }
 
   return (
-    /* eslint-disable @next/next/no-img-element */
-    <img
-      alt="Payload Logo"
-      width={193}
-      height={34}
-      loading={loading}
-      fetchPriority={priority}
-      decoding="async"
-      className={clsx('max-w-[9.375rem] w-full h-[34px]', className)}
-      src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-logo-light.svg"
-    />
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/xksprod.webp"
+        alt="XKSGROUP Company"
+        loading={loading}
+        fetchPriority={priority}
+        decoding="async"
+        className={clsx('h-auto w-[8.8rem] md:w-[11rem] object-contain', className)}
+        onError={() => setHasError(true)}
+      />
+      <span className="sr-only">XKSGROUP Company</span>
+    </>
   )
 }

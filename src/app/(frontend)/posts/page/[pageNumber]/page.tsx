@@ -34,11 +34,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   })
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="pt-28 pb-32">
       <PageClient />
-      <div className="container mb-16">
+      <div className="container mb-20">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1 className="title-display">Posts</h1>
         </div>
       </div>
 
@@ -65,7 +65,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise
   return {
-    title: `Payload Website Template Posts Page ${pageNumber || ''}`,
+    title: `Articles Page ${pageNumber || ''} | XKSPROD`,
   }
 }
 

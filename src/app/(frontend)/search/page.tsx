@@ -3,24 +3,27 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import Link from 'next/link'
 import React from 'react'
-import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 
 type Args = {
   searchParams: Promise<{
-    q: string
+    q?: string
   }>
 }
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
+  const normalizedQuery = query?.trim() || ''
   const payload = await getPayload({ config: configPromise })
 
   const posts = await payload.find({
-    collection: 'search',
+    collection: 'posts',
     depth: 1,
     limit: 12,
+    overrideAccess: false,
+    sort: '-publishedAt',
     select: {
       title: true,
       slug: true,
@@ -29,28 +32,28 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
     },
     // pagination: false reduces overhead if you don't need totalDocs
     pagination: false,
-    ...(query
+    ...(normalizedQuery
       ? {
           where: {
             or: [
               {
                 title: {
-                  like: query,
+                  like: normalizedQuery,
                 },
               },
               {
                 'meta.description': {
-                  like: query,
+                  like: normalizedQuery,
                 },
               },
               {
                 'meta.title': {
-                  like: query,
+                  like: normalizedQuery,
                 },
               },
               {
                 slug: {
-                  like: query,
+                  like: normalizedQuery,
                 },
               },
             ],
@@ -60,22 +63,46 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   })
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="pt-28 pb-32">
       <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none text-center">
-          <h1 className="mb-8 lg:mb-16">Search</h1>
-
-          <div className="max-w-[50rem] mx-auto">
-            <Search />
-          </div>
+      <div className="container mb-20">
+        <div className="max-w-[52rem] mx-auto text-center stack-lg">
+          <span className="eyebrow">Recherche</span>
+          <h1 className="title-display">Trouve une production rapidement.</h1>
+          <p className="lead">
+            Tape un mot-clé. Si rien n’est saisi, on affiche les dernières productions publiées.
+          </p>
+          <form action="/search" method="get" className="search-shell">
+            <input
+              name="q"
+              defaultValue={normalizedQuery}
+              placeholder="Ex: live session, brand film, direction artistique..."
+              className="search-input-modern"
+            />
+            <button type="submit" className="btn-gold rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]">
+              Rechercher
+            </button>
+          </form>
         </div>
       </div>
 
       {posts.totalDocs > 0 ? (
         <CollectionArchive posts={posts.docs as CardPostData[]} />
       ) : (
-        <div className="container">No results found.</div>
+        <div className="container">
+          <div className="card glass p-8 text-center max-w-[46rem] mx-auto">
+            <h2 className="text-2xl mb-3">Aucun résultat pour “{normalizedQuery}”.</h2>
+            <p className="text-white/70 mb-6">Essaie un autre mot-clé ou consulte directement les productions.</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/search" className="btn-ghost rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]">
+                Réinitialiser la recherche
+              </Link>
+              <Link href="/posts" className="btn-gold rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]">
+                Voir toutes les productions
+              </Link>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
@@ -83,6 +110,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Search`,
+    title: 'Recherche des productions | XKSPROD',
   }
 }
