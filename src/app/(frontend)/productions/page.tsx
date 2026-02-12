@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import { productions } from '@/data/productions'
+import { getProductionsByDossierSlug, productionDossiers } from '@/data/productions'
 
 export const metadata: Metadata = {
   title: 'Productions | XKSPROD',
@@ -16,9 +16,9 @@ export default function ProductionsPage() {
       <section className="container mb-12 md:mb-16">
         <div className="stack-lg">
           <span className="eyebrow">Productions</span>
-          <h1 className="title-display text-4xl md:text-6xl">Toutes nos productions</h1>
+          <h1 className="title-display text-4xl md:text-6xl">Dossiers de productions</h1>
           <p className="lead max-w-[46rem]">
-            Parcours de nos réalisations dans l’ordre, de la production 01 à la production 22.
+            Choisis un dossier pour afficher uniquement les productions concernées.
           </p>
           <div>
             <Link
@@ -33,19 +33,34 @@ export default function ProductionsPage() {
 
       <section className="container">
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {productions.map((item) => (
-            <article key={item.id} className="production-card group">
-              <div className="production-media">
-                <img src={item.image} alt={item.title} className="production-image" />
-                <div className="production-badge">{String(item.id).padStart(2, '0')}</div>
-              </div>
-              <div className="production-content">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/55">{item.meta}</p>
-                <h2 className="text-2xl">{item.title}</h2>
-                <p className="text-white/70">{item.desc}</p>
-              </div>
-            </article>
-          ))}
+          {productionDossiers.map((dossier) => {
+            const count = getProductionsByDossierSlug(dossier.slug).length
+
+            return (
+              <article key={dossier.slug} className="production-card group">
+                <Link href={`/productions/${dossier.slug}`} className="production-media block">
+                  <img src={dossier.coverImage} alt={dossier.name} className="production-image" />
+                  <div className="absolute inset-0 bg-black/45" />
+                  <div className="absolute inset-0 dot-matrix opacity-25" />
+                  <div className="production-badge">{count} items</div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h2 className="text-2xl leading-tight">{dossier.name}</h2>
+                  </div>
+                </Link>
+                <div className="production-content">
+                  <p className="text-white/70">{dossier.description}</p>
+                  <div>
+                    <Link
+                      href={`/productions/${dossier.slug}`}
+                      className="btn-ghost inline-flex items-center justify-center rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em]"
+                    >
+                      Ouvrir le dossier
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            )
+          })}
         </div>
       </section>
     </main>
