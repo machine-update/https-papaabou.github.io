@@ -16,51 +16,63 @@ type Args = {
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
   const normalizedQuery = query?.trim() || ''
-  const payload = await getPayload({ config: configPromise })
+  let posts: {
+    docs: unknown[]
+    totalDocs: number
+  } = {
+    docs: [],
+    totalDocs: 0,
+  }
 
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    overrideAccess: false,
-    sort: '-publishedAt',
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      meta: true,
-    },
-    // pagination: false reduces overhead if you don't need totalDocs
-    pagination: false,
-    ...(normalizedQuery
-      ? {
-          where: {
-            or: [
-              {
-                title: {
-                  like: normalizedQuery,
+  try {
+    const payload = await getPayload({ config: configPromise })
+
+    posts = await payload.find({
+      collection: 'posts',
+      depth: 1,
+      limit: 12,
+      overrideAccess: false,
+      sort: '-publishedAt',
+      select: {
+        title: true,
+        slug: true,
+        categories: true,
+        meta: true,
+      },
+      // pagination: false reduces overhead if you don't need totalDocs
+      pagination: false,
+      ...(normalizedQuery
+        ? {
+            where: {
+              or: [
+                {
+                  title: {
+                    like: normalizedQuery,
+                  },
                 },
-              },
-              {
-                'meta.description': {
-                  like: normalizedQuery,
+                {
+                  'meta.description': {
+                    like: normalizedQuery,
+                  },
                 },
-              },
-              {
-                'meta.title': {
-                  like: normalizedQuery,
+                {
+                  'meta.title': {
+                    like: normalizedQuery,
+                  },
                 },
-              },
-              {
-                slug: {
-                  like: normalizedQuery,
+                {
+                  slug: {
+                    like: normalizedQuery,
+                  },
                 },
-              },
-            ],
-          },
-        }
-      : {}),
-  })
+              ],
+            },
+          }
+        : {}),
+    })
+  } catch (error) {
+    console.warn('Could not run search, DB may not be initialized yet:', error)
+  }
 
   return (
     <div className="pt-28 pb-32">
