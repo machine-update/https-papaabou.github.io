@@ -17,6 +17,13 @@ import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const rawDatabaseURL = process.env.DATABASE_URL?.trim()
+const databaseURL =
+  !rawDatabaseURL
+    ? 'file:./frontend.db'
+    : rawDatabaseURL.includes('://') || rawDatabaseURL.startsWith('file:')
+      ? rawDatabaseURL
+      : `file:${rawDatabaseURL}`
 
 export default buildConfig({
   admin: {
@@ -59,14 +66,15 @@ export default buildConfig({
   editor: defaultLexical,
   db: sqliteAdapter({
     client: {
-      url: process.env.DATABASE_URL || '',
+      // Accept bare file names like "frontend.db" and normalize to "file:frontend.db".
+      url: databaseURL,
     },
   }),
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
-  secret: process.env.PAYLOAD_SECRET,
+  secret: process.env.PAYLOAD_SECRET || 'dev-secret',
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
