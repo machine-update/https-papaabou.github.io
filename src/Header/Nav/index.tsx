@@ -6,7 +6,7 @@ import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
 import Link from 'next/link'
-import { SearchIcon } from 'lucide-react'
+import { SearchIcon, X } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {

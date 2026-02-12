@@ -438,7 +438,7 @@ export default function HomePage() {
       <section className="section-space border-y border-white/5 bg-black/35">
         <div className="container">
           <div className="stack-lg mb-10">
-            <span className="eyebrow">Formats d'accompagnement</span>
+            <span className="eyebrow">Formats d&apos;accompagnement</span>
             <h2 className="text-3xl md:text-4xl tracking-tight">Des interfaces de collaboration adaptées à ton niveau d’ambition.</h2>
           </div>
           <div className="grid gap-5 lg:grid-cols-3">
