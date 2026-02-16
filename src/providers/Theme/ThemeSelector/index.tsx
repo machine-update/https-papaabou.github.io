@@ -1,51 +1,42 @@
 'use client'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import React, { useState } from 'react'
-
-import type { Theme } from './types'
 
 import { useTheme } from '..'
 import { themeLocalStorageKey } from './types'
 
 export const ThemeSelector: React.FC = () => {
   const { setTheme } = useTheme()
-  const [value, setValue] = useState('')
-
-  const onThemeChange = (themeToSet: Theme & 'auto') => {
-    if (themeToSet === 'auto') {
-      setTheme(null)
-      setValue('auto')
-    } else {
-      setTheme(themeToSet)
-      setValue(themeToSet)
-    }
-  }
+  const [value, setValue] = useState<'light' | 'dark'>('dark')
 
   React.useEffect(() => {
     const preference = window.localStorage.getItem(themeLocalStorageKey)
-    setValue(preference ?? 'auto')
+    if (preference === 'light' || preference === 'dark') {
+      setValue(preference)
+      return
+    }
+
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    setValue(systemDark ? 'dark' : 'light')
   }, [])
 
+  const isDark = value === 'dark'
+
+  const toggleTheme = () => {
+    const next: 'light' | 'dark' = isDark ? 'light' : 'dark'
+    setTheme(next)
+    setValue(next)
+  }
+
   return (
-    <Select onValueChange={onThemeChange} value={value}>
-      <SelectTrigger
-        aria-label="Select a theme"
-        className="w-auto bg-transparent gap-2 pl-0 md:pl-3 border-none"
-      >
-        <SelectValue placeholder="Theme" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="auto">Auto</SelectItem>
-        <SelectItem value="light">Light</SelectItem>
-        <SelectItem value="dark">Dark</SelectItem>
-      </SelectContent>
-    </Select>
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+      title={isDark ? 'Mode sombre' : 'Mode clair'}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/5 text-base transition hover:border-[#d4af37]/45 hover:bg-white/10"
+    >
+      <span aria-hidden>{isDark ? '🌙' : '☀️'}</span>
+    </button>
   )
 }

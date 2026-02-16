@@ -5,6 +5,7 @@ import React from 'react'
 import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
+import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import Link from 'next/link'
 import { SearchIcon, X } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -67,8 +68,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const mainLinks = [
     { label: 'Accueil', href: '/' },
     { label: 'A propos', href: '/a-propos' },
-    { label: 'Productions', href: '/#productions' },
+    { label: 'Productions', href: '/productions' },
     { label: 'Artistes', href: '/artistes' },
+    { label: 'Casting', href: '/casting' },
     { label: 'Contact', href: '/contact' },
   ]
   const servicesSubLinks = [
@@ -76,11 +78,11 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
     { label: 'Partenaires', href: '/#partenaires' },
   ]
   const desktopNavLinkClass =
-    'relative inline-flex items-center py-1 text-white/80 transition-all duration-300 hover:text-xks-gold hover:[text-shadow:0_0_12px_rgba(219,178,74,0.45)] after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-transparent after:via-[#DBB24A] after:to-transparent after:transition-transform after:duration-300 hover:after:scale-x-100'
+    'relative inline-flex items-center py-1 text-white/95 transition-all duration-300 hover:text-xks-gold hover:[text-shadow:0_0_12px_rgba(219,178,74,0.45)] after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-transparent after:via-[#DBB24A] after:to-transparent after:transition-transform after:duration-300 hover:after:scale-x-100'
 
   return (
     <div className="relative">
-      <nav className="hidden md:flex gap-6 items-center text-xs font-semibold uppercase tracking-[0.22em] text-white/80">
+      <nav className="hidden md:flex gap-6 items-center text-xs font-semibold uppercase tracking-[0.22em] text-white/95">
         {mainLinks.slice(0, 2).map((item) => (
           <Link
             key={item.href}
@@ -152,6 +154,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           <span className="sr-only">Recherche</span>
           <SearchIcon className="w-4 text-xks-gold" />
         </button>
+        <div className="hidden lg:block">
+          <ThemeSelector />
+        </div>
       </nav>
 
       <button
@@ -245,6 +250,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             >
               Rechercher ici
             </button>
+            <div className="pt-2">
+              <ThemeSelector />
+            </div>
           </nav>
         </div>
       )}

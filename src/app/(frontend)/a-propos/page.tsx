@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
@@ -30,11 +31,19 @@ export default function AboutPage() {
           <div className="stack-lg">
             <span className="eyebrow">A propos</span>
             <h1 className="text-3xl md:text-5xl tracking-tight">Le studio derrière XKSPROD.</h1>
+            <div className="flex flex-wrap gap-2 text-xs uppercase tracking-[0.2em] text-white/65">
+              <span className="pill">15+ ans d’expérience</span>
+              <span className="pill">Exécution premium</span>
+              <span className="pill">Europe</span>
+            </div>
             <div className="card glass p-3">
               <div className="overflow-hidden rounded-[0.9rem] border border-white/10">
-                <img
+                <Image
                   src="/home/imagexksnoirglod.jpg"
                   alt="XKSPROD Entertainment"
+                  width={1200}
+                  height={800}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="h-[13rem] w-full object-cover md:h-[16rem]"
                 />
               </div>

@@ -14,7 +14,7 @@ export default function ArtistesPage() {
   return (
     <main className="bg-cinema text-white pt-20 md:pt-24 pb-20 md:pb-28">
       <section className="container mb-12">
-        <div className="max-w-4xl stack-lg">
+        <div className="max-w-4xl stack-lg artistes-page-header">
           <div className="text-xs uppercase tracking-[0.22em] text-white/55">
             <Link href="/" className="hover:text-xks-gold transition-colors">
               Accueil

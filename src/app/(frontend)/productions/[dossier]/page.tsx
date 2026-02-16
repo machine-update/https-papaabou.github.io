@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
+import { SectionFadeIn } from '@/components/SectionFadeIn'
 import {
   getDossierBySlug,
   getProductionsByDossierSlug,
@@ -46,48 +47,104 @@ export default async function ProductionDossierPage({ params }: Args) {
   }
 
   const items = getProductionsByDossierSlug(dossier.slug)
+  const dossierDisplayTitle = dossier.slug === 'dakarfaitsacomedy' ? 'Dakar Fait Sa Comedy' : dossier.name
+  const youtubeId = getYouTubeId(dossier.youtubeUrl)
+  const videoLead = `Une immersion rapide dans l'univers ${dossierDisplayTitle}: énergie de scène, direction artistique et identité du format.`
+  const productionsLead = `Chaque visuel ci-dessous correspond à une déclinaison de production pensée pour la scène, la diffusion digitale et la communication événementielle.`
 
   return (
-    <main className="bg-cinema text-white pt-24 md:pt-28 pb-24 md:pb-32">
-      <section className="container mb-12 md:mb-16">
-        <div className="stack-lg">
-          <span className="eyebrow">Dossier</span>
-          <h1 className="title-display text-4xl md:text-6xl">{dossier.name}</h1>
-          <p className="lead max-w-[46rem]">{dossier.description}</p>
-          <p className="text-white/65 text-sm uppercase tracking-[0.2em]">{items.length} productions</p>
+    <main className="bg-cinema text-white pt-24 md:pt-28 pb-24 md:pb-32 production-dossier-page">
+      <SectionFadeIn className="container mb-12 md:mb-16">
+        <nav className="mb-4 text-xs uppercase tracking-[0.18em] text-white/50 flex items-center gap-2">
+          <Link href="/" className="hover:text-white transition-colors">
+            Accueil
+          </Link>
+          <span>/</span>
+          <Link href="/productions" className="hover:text-white transition-colors">
+            Productions
+          </Link>
+          <span>/</span>
+          <span className="text-white/75">{dossier.name}</span>
+        </nav>
+        <div className="card glass p-7 md:p-10 stack-lg dossier-hero-card dossier-hero-card-modern">
+          <span className="eyebrow">Collection</span>
+          <h1 className="dossier-hero-title dossier-hero-title-modern">{dossierDisplayTitle}</h1>
+          <p className="lead max-w-[48rem] dossier-hero-lead">{dossier.description}</p>
+          <div className="dossier-hero-meta">
+            <span className="dossier-meta-pill">{items.length} productions</span>
+            <span className="dossier-meta-pill">Direction artistique</span>
+            <span className="dossier-meta-pill">Exécution premium</span>
+          </div>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/productions"
-              className="btn-ghost inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]"
+              className="btn-gold inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.16em]"
             >
-              Tous les dossiers
+              Toutes les collections
             </Link>
             <Link
               href="/#productions"
-              className="btn-ghost inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]"
+              className="btn-ghost inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.16em]"
             >
               Retour accueil
             </Link>
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container">
+      {youtubeId && (
+        <SectionFadeIn className="container mb-12 md:mb-16">
+          <section className="dossier-video-shell">
+            <div className="dossier-video-head">
+              <span className="eyebrow">Bande-annonce</span>
+              <h2 className="dossier-video-title">Extrait officiel</h2>
+              <p className="dossier-video-lead">{videoLead}</p>
+            </div>
+            <div className="dossier-video-frame">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
+                title={`Bande-annonce ${dossierDisplayTitle}`}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+            <div className="dossier-video-foot">
+              <a
+                href={`https://www.youtube.com/watch?v=${youtubeId}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-ghost inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.16em]"
+              >
+                Voir sur YouTube
+              </a>
+            </div>
+          </section>
+        </SectionFadeIn>
+      )}
+
+      <SectionFadeIn className="container">
         {items.length > 0 ? (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => (
-              <article key={item.id} className="production-card group">
-                <div className="production-media">
-                  <img src={item.image} alt={item.title} className="production-image" />
-                  <div className="production-badge">{String(item.id).padStart(2, '0')}</div>
-                </div>
-                <div className="production-content">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/55">{item.meta}</p>
-                  <h2 className="text-2xl">{item.title}</h2>
-                  <p className="text-white/70">{item.desc}</p>
-                </div>
-              </article>
-            ))}
+          <div className="stack-lg">
+            <div className="dossier-productions-head">
+              <span className="eyebrow">Productions</span>
+              <h2 className="dossier-video-title">Galerie du dossier</h2>
+              <p className="dossier-productions-lead">{productionsLead}</p>
+            </div>
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {items.map((item) => (
+                <article key={item.id} className="production-card group">
+                  <div className="production-media">
+                    <img src={item.image} alt={item.title} className="production-image" />
+                  </div>
+                  <div className="production-content">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/55">{item.meta}</p>
+                    <h2 className="production-directory-title">{item.title}</h2>
+                    <p className="text-white/70">{item.desc}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="card glass p-6">
@@ -97,7 +154,33 @@ export default async function ProductionDossierPage({ params }: Args) {
             </p>
           </div>
         )}
-      </section>
+      </SectionFadeIn>
     </main>
   )
+}
+
+function getYouTubeId(url?: string) {
+  if (!url) return null
+
+  try {
+    const parsed = new URL(url)
+
+    if (parsed.hostname.includes('youtu.be')) {
+      const id = parsed.pathname.replace('/', '').trim()
+      return id || null
+    }
+
+    if (parsed.hostname.includes('youtube.com')) {
+      const fromQuery = parsed.searchParams.get('v')
+      if (fromQuery) return fromQuery
+
+      const parts = parsed.pathname.split('/').filter(Boolean)
+      const embedIndex = parts.findIndex((part) => part === 'embed' || part === 'shorts')
+      if (embedIndex >= 0 && parts[embedIndex + 1]) return parts[embedIndex + 1]
+    }
+
+    return null
+  } catch {
+    return null
+  }
 }

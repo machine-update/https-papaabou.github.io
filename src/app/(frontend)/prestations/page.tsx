@@ -83,7 +83,7 @@ const progressItems = [
 
 const footerLinks = [
   { label: 'À propos', href: '/a-propos' },
-  { label: 'Productions', href: '/posts' },
+  { label: 'Productions', href: '/productions' },
   { label: 'Contact', href: '/contact' },
 ]
 
@@ -334,7 +334,7 @@ export default function PrestationsPage() {
                 Contact direct
               </Link>
               <Link
-                href="/posts"
+                href="/productions"
                 className="inline-flex items-center justify-center rounded-full border border-white/18 bg-white/5 px-6 py-3 text-xs uppercase tracking-[0.2em] text-white/90 transition hover:border-[#c08f3c]/45 hover:text-white"
               >
                 Voir nos productions

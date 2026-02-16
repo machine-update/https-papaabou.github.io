@@ -1,11 +1,18 @@
 import type { Metadata } from 'next'
+import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { ExternalLink } from 'lucide-react'
 import { PartnerLogo } from '@/components/PartnerLogo'
 import { ArtistPhoto } from '@/components/ArtistPhoto'
+import { SectionFadeIn } from '@/components/SectionFadeIn'
 import { featuredArtists } from '@/data/artists'
-import { productions } from '@/data/productions'
+import { getProductionsByDossierSlug, productionDossiers } from '@/data/productions'
+import ahmedSyllaImg from './(frontend)/productions/[dossier]/ahmedsylla.png'
+import dakarFaitSaComedyImg from './(frontend)/productions/[dossier]/dakarfaitsacomedy.png'
+import hamiltonImg from './(frontend)/productions/[dossier]/hamilton.png'
+import myComedyJamImg from './(frontend)/productions/[dossier]/mycomedyjamd.png'
+import sambaShowImg from './(frontend)/productions/[dossier]/sambashow.png'
 
 export const metadata: Metadata = {
   title: 'XKSPROD | Studio premium audiovisuel & artistique',
@@ -61,13 +68,13 @@ const steps = [
 const testimonials = [
   {
     quote:
-      'XKSPROD a donné une forme claire à notre univers. Tout était précis, fluide, et d’un niveau rare.',
-    name: 'Directrice artistique, Maison Éclipse',
+      'Chaque projet est cadré avec une méthode claire: objectifs, format, planning et niveau de finition attendu.',
+    name: 'Approche XKSPROD',
   },
   {
     quote:
-      'Le résultat a dépassé nos attentes. Ils comprennent la vision et savent l’exécuter avec rigueur.',
-    name: 'Producteur, Live Nocturne',
+      'Notre engagement: une exécution propre, mesurable et cohérente avec votre image, du brief à la livraison.',
+    name: 'Engagement studio',
   },
 ]
 
@@ -152,31 +159,39 @@ const organizationLdJson = {
   areaServed: 'Europe',
 }
 
+const dossierImageBySlug: Record<string, StaticImageData> = {
+  lesambashow: sambaShowImg,
+  mycomedyjam: myComedyJamImg,
+  claytonhamilton: hamiltonImg,
+  'spectacle-ahmed-sylla': ahmedSyllaImg,
+  dakarfaitsacomedy: dakarFaitSaComedyImg,
+}
+
 export default function HomePage() {
   return (
-    <main className="bg-cinema text-white">
+    <main className="bg-cinema text-white home-no-serif">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLdJson) }}
       />
-      <section className="relative overflow-hidden pt-16 md:pt-24 pb-20 md:pb-32">
+      <SectionFadeIn className="home-hero-dark relative overflow-hidden pt-14 md:pt-20 pb-16 md:pb-24">
         <div className="absolute inset-0 hero-frame" />
         <div className="absolute inset-0 vignette" />
         <div className="absolute inset-0 noise" />
 
         <div className="container relative z-10">
-          <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] items-center">
-            <div className="stack-xl">
+          <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] items-center">
+            <div className="stack-lg">
               <div className="flex items-center gap-3">
                 <span className="pulse-dot" />
                 <span className="eyebrow">Production d’artistes & spectacles</span>
               </div>
 
-              <div className="stack-lg">
-                <h1 className="title-display tracking-tight">
+              <div className="stack-md">
+                <h1 className="title-display hero-title-home tracking-tight">
                   XKSPROD, depuis plus de 15 ans, nous produisons des artistes et des spectacles.
                 </h1>
-                <p className="lead max-w-[38rem]">
+                <p className="lead hero-lead-home max-w-[34rem]">
                   Une équipe de professionnels expérimentés à votre écoute, pour créer l’outil de
                   communication qui vous correspond et réaliser avec vous un événement unique.
                 </p>
@@ -185,7 +200,7 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/contact"
-                  className="btn-gold inline-flex items-center justify-center rounded-full px-6 py-3 text-sm tracking-wide"
+                  className="btn-gold inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[0.9rem] tracking-wide"
                   data-track-event="hero_cta_click"
                   data-track-location="hero"
                   data-track-label="demarrer_un_projet"
@@ -194,7 +209,7 @@ export default function HomePage() {
                 </Link>
                 <Link
                   href="/productions"
-                  className="btn-ghost inline-flex items-center justify-center rounded-full px-6 py-3 text-sm tracking-wide"
+                  className="btn-ghost inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[0.9rem] tracking-wide"
                   data-track-event="hero_cta_click"
                   data-track-location="hero"
                   data-track-label="voir_productions"
@@ -203,7 +218,7 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.22em] text-white/60">
+              <div className="hero-facts-grid">
                 <span>15+ ans d’expertise</span>
                 <span>Écoute client</span>
                 <span>Accompagnement sur-mesure</span>
@@ -211,7 +226,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative home-hero-panel">
               <div className="absolute -inset-6 film-burn" />
               <div className="relative grid gap-4">
                 <div className="card glass p-6 gold-outline">
@@ -222,10 +237,13 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div className="rounded-[1.4rem] h-56 md:h-64 border border-white/10 relative overflow-hidden">
-                  <img
+                  <Image
                     src="/home/image.webp"
                     alt="Signature visuelle XKSPROD"
                     className="absolute inset-0 h-full w-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    quality={85}
                   />
                   <div className="absolute inset-0 bg-black/30" />
                   <div className="absolute inset-0 dot-matrix opacity-25" />
@@ -244,9 +262,9 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-16 md:pb-24">
+      <SectionFadeIn className="container pb-16 md:pb-24 home-services-modern">
         <div className="grid gap-4 md:grid-cols-3">
           {services.map((service) => (
             <article key={service.title} className="card glass p-6 stack-md hover-rise">
@@ -262,28 +280,41 @@ export default function HomePage() {
             </article>
           ))}
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-16 md:pb-24">
+      <SectionFadeIn className="container pb-16 md:pb-24 home-story-modern">
         <div className="grid gap-8 lg:grid-cols-[0.6fr_0.4fr] items-start">
           <div className="stack-lg">
             <span className="eyebrow">Notre histoire</span>
             <h2 className="title-display text-4xl md:text-5xl max-w-[54rem]">{companyStory.title}</h2>
             <p className="lead">{companyStory.body}</p>
             <p className="text-white/75 text-lg">{companyStory.body2}</p>
+            <aside className="card glass p-6 stack-sm max-w-[38rem]">
+              <h3 className="text-2xl">Ce qui fait la différence</h3>
+              <ul className="stack-sm text-white/75">
+                <li>Équipe senior multidisciplinaire</li>
+                <li>Direction artistique forte et cohérente</li>
+                <li>Exécution rapide, propre, mesurable</li>
+              </ul>
+            </aside>
           </div>
-          <aside className="card glass p-6 stack-md">
-            <h3 className="text-2xl">Ce qui fait la différence</h3>
-            <ul className="stack-sm text-white/75">
-              <li>Équipe senior multidisciplinaire</li>
-              <li>Direction artistique forte et cohérente</li>
-              <li>Exécution rapide, propre, mesurable</li>
-            </ul>
-          </aside>
+          <div className="story-visual-shell">
+            <div className="story-photo-frame">
+              <Image
+                src="/home/premiumimage.png"
+                alt="Régie et captation live premium XKSPROD"
+                fill
+                sizes="(max-width: 768px) 100vw, 40vw"
+                quality={90}
+                className="story-photo"
+              />
+              <div className="story-photo-overlay" />
+            </div>
+          </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-20 md:pb-28">
+      <SectionFadeIn className="container pb-20 md:pb-28">
         <div className="stack-lg">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -301,14 +332,14 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-20 md:pb-28">
+      <SectionFadeIn id="productions" className="container pb-20 md:pb-28">
         <div className="stack-lg">
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
               <span className="eyebrow">Réalisations</span>
-              <h2 className="title-display text-4xl md:text-5xl">Formats produits par XKSPROD</h2>
+              <h2 className="title-display text-3xl md:text-4xl">Nos productions</h2>
             </div>
             <Link href="/productions" className="btn-ghost rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em]">
               Voir tout
@@ -316,23 +347,48 @@ export default function HomePage() {
           </div>
 
           <div className="grid gap-5 lg:grid-cols-3">
-            {productions.slice(0, 6).map((work) => (
-              <article key={work.title} className="work-card group">
-                <div className="work-media">
-                  <img src={work.image} alt={work.title} className="work-image" />
-                </div>
-                <div className="work-content">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/55">{work.meta}</p>
-                  <h3 className="text-2xl">{work.title}</h3>
-                  <p className="text-white/70">{work.desc}</p>
-                </div>
-              </article>
-            ))}
+            {productionDossiers.map((dossier) => {
+              const count = getProductionsByDossierSlug(dossier.slug).length
+              const dossierImage = dossierImageBySlug[dossier.slug]
+
+              return (
+                <article key={dossier.slug} className="production-card group">
+                  <Link href={`/productions/${dossier.slug}`} className="block">
+                    <div className="production-media">
+                      <Image
+                        src={dossierImage}
+                        alt={dossier.name}
+                        className="production-image production-dossier-image"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        quality={86}
+                      />
+                    </div>
+                  </Link>
+                  <div className="production-content">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-white/55">Collection</p>
+                      <span className="pill text-[11px] text-white/70">{count} items</span>
+                    </div>
+                    <h3 className="production-directory-title">{dossier.name}</h3>
+                    <p className="text-white/70">{dossier.description}</p>
+                    <div>
+                      <Link
+                        href={`/productions/${dossier.slug}`}
+                        className="btn-ghost inline-flex items-center justify-center rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em]"
+                      >
+                        Explorer
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              )
+            })}
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-20 md:pb-28">
+      <SectionFadeIn className="container pb-20 md:pb-28">
         <div className="stack-lg">
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
@@ -370,9 +426,9 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-20 md:pb-28">
+      <SectionFadeIn className="container pb-20 md:pb-28">
         <div className="grid gap-5 md:grid-cols-2">
           {testimonials.map((item) => (
             <blockquote key={item.name} className="card glass p-7">
@@ -381,9 +437,9 @@ export default function HomePage() {
             </blockquote>
           ))}
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-20 md:pb-28">
+      <SectionFadeIn className="container pb-20 md:pb-28">
         <div className="card gradient-border p-[1px] rounded-[1.5rem]">
           <div className="rounded-[1.45rem] bg-black/65 p-8 md:p-10 stack-lg">
             <div>
@@ -401,9 +457,9 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-20 md:pb-28">
+      <SectionFadeIn className="container pb-20 md:pb-28">
         <div className="stack-lg">
           <div>
             <span className="eyebrow">Partenaires</span>
@@ -421,9 +477,9 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-24 md:pb-32">
+      <SectionFadeIn className="container pb-24 md:pb-32">
         <div className="stack-lg max-w-[56rem]">
           <div>
             <span className="eyebrow">FAQ</span>
@@ -443,9 +499,9 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
 
-      <section className="container pb-24 md:pb-36">
+      <SectionFadeIn className="container pb-24 md:pb-36">
         <div className="cta-band stack-md text-center md:text-left md:flex md:items-center md:justify-between md:gap-8">
           <div className="stack-sm">
             <span className="eyebrow">Prêt à produire quelque chose d’unique ?</span>
@@ -460,7 +516,7 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </SectionFadeIn>
     </main>
   )
 }

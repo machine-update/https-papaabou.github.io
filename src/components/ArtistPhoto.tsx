@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import React from 'react'
 
 type Props = {
@@ -17,12 +18,12 @@ export const ArtistPhoto: React.FC<Props> = ({ src, alt, fallback, className }) 
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={src}
       alt={alt}
-      loading="lazy"
-      decoding="async"
+      width={800}
+      height={1000}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       className={className}
       onError={() => setBroken(true)}
     />

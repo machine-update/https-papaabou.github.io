@@ -40,45 +40,107 @@ export const artists: Artist[] = [
     featured: true,
   },
   {
-    slug: 'talent-2',
-    name: 'Artiste Signature',
-    role: 'Chant · Performance',
+    slug: 'udeyfa',
+    name: 'Udeyfa',
+    role: 'Artiste · Performance',
     shortBio:
-      'Projet artistique premium accompagné en direction créative, image et déploiement live.',
+      'Univers visuel fort, présence scénique moderne et formats pensés pour la scène et le digital.',
     longBio:
-      'Artiste accompagné sur la structuration d’image, la cohérence de marque et la montée en puissance scénique. Travail sur storytelling, contenu vidéo et activation multi-plateformes.',
-    photo: '/artists/talent-2.jpg',
+      'Udeyfa développe une identité artistique contemporaine entre performance live et storytelling visuel. Profil adapté aux événements, collaborations de marque et formats vidéo premium.',
+    photo: '/artists/photoudeyfa.jpg',
     stats: [
-      { label: 'Positionnement', value: 'Image premium' },
-      { label: 'Format fort', value: 'Live + Social' },
-      { label: 'Langue', value: 'Français / Anglais' },
-    ],
-    highlights: [
-      'Direction artistique cohérente et signature visuelle forte.',
-      'Format adaptable aux campagnes digitales et événements privés.',
-    ],
-    bookingFormats: ['Showcase', 'Campagne social', 'Activation brand content'],
-    featured: true,
-  },
-  {
-    slug: 'talent-3',
-    name: 'Artiste Live',
-    role: 'Live · Scène',
-    shortBio:
-      'Présence scénique forte, univers affirmé et capacité à créer des expériences mémorables en public.',
-    longBio:
-      'Développement orienté scène et performance live: direction artistique, création de formats courts et stratégie de visibilité pour accélérer l’acquisition d’audience.',
-    photo: '/artists/talent-3.jpg',
-    stats: [
-      { label: 'Positionnement', value: 'Live performer' },
-      { label: 'Format fort', value: 'Scène' },
+      { label: 'Positionnement', value: 'Urbain premium' },
+      { label: 'Format fort', value: 'Live + Digital' },
       { label: 'Langue', value: 'Français' },
     ],
     highlights: [
-      'Excellente présence scénique et forte capacité d’animation.',
-      'Format idéal pour tournées, événements et contenus courts.',
+      'Image artistique cohérente et impactante.',
+      'Capacité d’adaptation aux formats live et contenus courts.',
+      'Bonne résonance pour activations culturelles et marque.',
     ],
-    bookingFormats: ['Concert live', 'Festival', 'Show privé'],
+    bookingFormats: ['Showcase', 'Live', 'Collaboration marque'],
+    socials: [
+      { label: 'Instagram', url: 'https://instagram.com/' },
+      { label: 'YouTube', url: 'https://youtube.com/' },
+    ],
+    featured: true,
+  },
+  {
+    slug: 'lamya-pry',
+    name: 'Lamya Pry',
+    role: 'Artiste · Chant',
+    shortBio:
+      'Voix singulière, image élégante et potentiel fort pour les formats live, éditoriaux et brand content.',
+    longBio:
+      'Lamya Pry porte un univers artistique raffiné entre musique, interprétation et présence caméra. Son profil s’intègre parfaitement aux shows premium, campagnes créatives et performances scéniques.',
+    photo: '/artists/photolamyapry.png',
+    stats: [
+      { label: 'Positionnement', value: 'Pop / Premium' },
+      { label: 'Format fort', value: 'Showcase' },
+      { label: 'Langue', value: 'Français / Anglais' },
+    ],
+    highlights: [
+      'Signature vocale identifiable et esthétique soignée.',
+      'Facilité à performer en live et en format caméra.',
+      'Profil premium pour contenus éditoriaux et campagnes.',
+    ],
+    bookingFormats: ['Showcase', 'Session live', 'Campagne social'],
+    socials: [
+      { label: 'Instagram', url: 'https://instagram.com/' },
+      { label: 'YouTube', url: 'https://youtube.com/' },
+    ],
+    featured: true,
+  },
+  {
+    slug: 'backy-et-flashy',
+    name: 'Backy et Flashy',
+    role: 'Duo · Performance',
+    shortBio:
+      'Duo énergie live, tonalité moderne et forte capacité d’animation sur scène et digital.',
+    longBio:
+      'Backy et Flashy proposent un format duo dynamique, calibré pour la scène, les activations événementielles et les contenus à fort engagement. Leur complémentarité artistique crée une signature immédiatement reconnaissable.',
+    photo: '/artists/photobackyflashy.png',
+    stats: [
+      { label: 'Positionnement', value: 'Duo entertainment' },
+      { label: 'Format fort', value: 'Live duo' },
+      { label: 'Langue', value: 'Français' },
+    ],
+    highlights: [
+      'Forte énergie scénique et interaction public.',
+      'Format adaptable aux événements et capsules digitales.',
+      'Potentiel viral sur formats courts.',
+    ],
+    bookingFormats: ['Show live', 'Événementiel', 'Format digital'],
+    socials: [
+      { label: 'Instagram', url: 'https://instagram.com/' },
+      { label: 'YouTube', url: 'https://youtube.com/' },
+    ],
+    featured: true,
+  },
+  {
+    slug: 'polor',
+    name: 'Polor',
+    role: 'Artiste · Spoken / Live',
+    shortBio:
+      'Présence scénique sobre et puissante, univers artistique orienté scène et performance vocale.',
+    longBio:
+      'Polor développe une ligne artistique marquée par la profondeur de ton, l’élégance et l’intensité scénique. Son profil est pertinent pour formats live premium, soirées signatures et collaborations culturelles.',
+    photo: '/artists/photopolor.png',
+    stats: [
+      { label: 'Positionnement', value: 'Scène premium' },
+      { label: 'Format fort', value: 'Live vocal' },
+      { label: 'Langue', value: 'Français' },
+    ],
+    highlights: [
+      'Forte empreinte scénique et posture artistique claire.',
+      'Convient aux formats intimistes et aux scènes grand public.',
+      'Image cohérente pour activations haut de gamme.',
+    ],
+    bookingFormats: ['Scène live', 'Session acoustique', 'Événement privé'],
+    socials: [
+      { label: 'Instagram', url: 'https://instagram.com/' },
+      { label: 'YouTube', url: 'https://youtube.com/' },
+    ],
     featured: true,
   },
 ]

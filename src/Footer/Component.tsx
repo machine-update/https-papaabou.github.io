@@ -10,7 +10,13 @@ import { Logo } from '@/components/Logo/Logo'
 import { Instagram, Linkedin, Youtube } from 'lucide-react'
 
 export async function Footer() {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
+  let footerData: Footer
+  try {
+    footerData = await getCachedGlobal('footer', 1)()
+  } catch (error) {
+    console.warn('Footer global unavailable, using fallback footer.', error)
+    footerData = { navItems: [] } as unknown as Footer
+  }
 
   const navItems = (footerData?.navItems || []).filter(({ link }) => {
     const haystack = `${link?.label || ''} ${link?.url || ''}`.toLowerCase()
@@ -20,7 +26,7 @@ export async function Footer() {
     { label: 'Accueil', href: '/' },
     { label: 'Artistes', href: '/artistes' },
     { label: 'Prestations', href: '/prestations' },
-    { label: 'Productions', href: '/posts' },
+    { label: 'Productions', href: '/productions' },
     { label: 'Recherche', href: '/search' },
     { label: 'Contact', href: '/contact' },
   ]
@@ -37,43 +43,9 @@ export async function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="mt-auto border-t border-border bg-black text-white relative overflow-hidden">
+    <footer className="site-footer-dark mt-auto border-t border-border bg-black text-white relative overflow-hidden">
       <div className="absolute inset-0 dot-matrix opacity-10 pointer-events-none" />
       <div className="container relative z-10 py-12 md:py-16 grid gap-8">
-        <div className="cta-panel cta-panel-footer p-6 md:p-8 grid gap-6 lg:grid-cols-[1.25fr_0.75fr] items-center relative overflow-hidden">
-          <div className="absolute inset-0 cta-panel-noise pointer-events-none" />
-          <div className="absolute -top-20 -right-8 w-72 h-72 cta-orb pointer-events-none" />
-          <div className="absolute -bottom-24 -left-8 w-80 h-80 cta-orb-soft pointer-events-none" />
-          <div className="stack-lg relative z-10">
-            <span className="eyebrow">Prochain projet</span>
-            <h2 className="text-2xl md:text-3xl tracking-tight">Prêt à passer en production ?</h2>
-            <p className="text-white/70 max-w-[40rem]">
-              Donne-nous ton contexte, tes objectifs et ton timing. On te répond avec une proposition
-              claire sous 48h.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3 lg:justify-end relative z-10">
-            <Link
-              href="/contact"
-              className="btn-gold inline-flex items-center justify-center rounded-full px-6 py-3 text-xs uppercase tracking-[0.22em]"
-              data-track-event="footer_cta_click"
-              data-track-location="footer_top"
-              data-track-label="brief_projet"
-            >
-              Envoyer un brief
-            </Link>
-            <Link
-              href="/posts"
-              className="btn-ghost inline-flex items-center justify-center rounded-full px-6 py-3 text-xs uppercase tracking-[0.22em]"
-              data-track-event="footer_cta_click"
-              data-track-location="footer_top"
-              data-track-label="voir_productions"
-            >
-              Voir le portfolio
-            </Link>
-          </div>
-        </div>
-
         <div className="grid gap-8 md:gap-10 lg:grid-cols-4">
           <div className="stack-lg">
             <Link className="flex items-center" href="/">

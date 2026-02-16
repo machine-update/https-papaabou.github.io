@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import React from 'react'
 
 type Props = {
@@ -16,13 +17,13 @@ export const PartnerLogo: React.FC<Props> = ({ alt, mark, src, href }) => {
     <div className="partner-mark">{mark}</div>
   ) : (
     <div className="partner-logo-wrap">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={src}
         alt={alt}
+        width={320}
+        height={120}
+        sizes="(max-width: 768px) 50vw, 20vw"
         className="partner-logo-img"
-        loading="lazy"
-        decoding="async"
         onError={() => setBroken(true)}
       />
     </div>

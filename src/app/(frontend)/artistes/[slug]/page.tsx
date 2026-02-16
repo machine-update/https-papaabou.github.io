@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { ArtistPhoto } from '@/components/ArtistPhoto'
-import { artists, getArtistBySlug } from '@/data/artists'
+import { getArtistBySlug } from '@/data/artists'
 
 type Args = {
   params: Promise<{
@@ -12,9 +12,7 @@ type Args = {
   }>
 }
 
-export async function generateStaticParams() {
-  return artists.map((artist) => ({ slug: artist.slug }))
-}
+export const dynamicParams = true
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params

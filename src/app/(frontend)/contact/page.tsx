@@ -39,6 +39,11 @@ export default function ContactPage() {
               <p className="lead">
                 Décrivez ce que vous voulez créer, ce que vous attendez du résultat, et votre échéance.
               </p>
+              <div className="flex flex-wrap gap-2 text-xs uppercase tracking-[0.2em] text-white/65">
+                <span className="pill">Réponse 24-48h</span>
+                <span className="pill">Brief stratégique</span>
+                <span className="pill">Accompagnement complet</span>
+              </div>
             </div>
 
             <div className="relative z-10 grid gap-3">
