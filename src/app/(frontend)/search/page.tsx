@@ -109,7 +109,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
               <Link href="/search" className="btn-ghost rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]">
                 Réinitialiser la recherche
               </Link>
-              <Link href="/posts" className="btn-gold rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]">
+              <Link href="/productions" className="btn-gold rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em]">
                 Voir toutes les productions
               </Link>
             </div>

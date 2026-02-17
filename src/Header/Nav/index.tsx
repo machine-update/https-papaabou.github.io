@@ -8,7 +8,7 @@ import { CMSLink } from '@/components/Link'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import Link from 'next/link'
 import { SearchIcon, X } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -19,7 +19,6 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const mobileMenuRef = React.useRef<HTMLDivElement | null>(null)
   const menuTriggerRef = React.useRef<HTMLButtonElement | null>(null)
   const pathname = usePathname()
-  const router = useRouter()
   const handleNavClick = React.useCallback(() => {
     setSearchOpen(false)
     setIsOpen(false)
@@ -304,8 +303,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               className="search-shell"
               onSubmit={(event) => {
                 event.preventDefault()
-                router.push(`/search${searchValue.trim() ? `?q=${encodeURIComponent(searchValue.trim())}` : ''}`)
+                const nextURL = `/search${searchValue.trim() ? `?q=${encodeURIComponent(searchValue.trim())}` : ''}`
                 setSearchOpen(false)
+                window.location.assign(nextURL)
               }}
             >
               <input

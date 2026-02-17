@@ -66,7 +66,7 @@ export default function ContactPage() {
                 +33 1 34 25 86 59
               </a>
               <div className="pt-2">
-                <Link href="/posts" className="text-white/80 hover:text-xks-gold transition-colors">
+                <Link href="/productions" className="text-white/80 hover:text-xks-gold transition-colors">
                   Voir des productions récentes
                 </Link>
               </div>
