@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { takeRateLimit } from '@/utilities/rateLimit'
+import { verifyTurnstileToken } from '@/utilities/verifyTurnstile'
 
 type CastingPayload = {
   fullName: string
@@ -13,6 +15,27 @@ type CastingPayload = {
   website: string
   attachmentName: string
   attachmentSize: number
+}
+
+const getClientIP = (request: Request): string => {
+  const forwarded = request.headers.get('x-forwarded-for')
+  if (forwarded) return forwarded.split(',')[0]?.trim() || 'unknown'
+
+  return request.headers.get('x-real-ip') || 'unknown'
+}
+
+const isAllowedOrigin = (request: Request): boolean => {
+  const origin = request.headers.get('origin')
+  if (!origin) return true
+
+  const allowedServerURL = process.env.NEXT_PUBLIC_SERVER_URL
+  if (!allowedServerURL) return true
+
+  try {
+    return new URL(origin).host === new URL(allowedServerURL).host
+  } catch {
+    return false
+  }
 }
 
 const escapeHtml = (value: string) =>
@@ -87,6 +110,40 @@ const sendCastingEmail = async (data: CastingPayload) => {
 
 export async function POST(request: Request) {
   try {
+    if (!isAllowedOrigin(request)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Origine de la requête non autorisée.',
+        },
+        { status: 403 },
+      )
+    }
+
+    const clientIP = getClientIP(request)
+    const rateLimit = takeRateLimit({
+      key: `casting:${clientIP}`,
+      windowMs: 10 * 60 * 1000,
+      maxHits: 5,
+    })
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Trop de tentatives. Merci de réessayer dans quelques minutes.',
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(rateLimit.retryAfterSec),
+            'X-RateLimit-Limit': String(rateLimit.limit),
+            'X-RateLimit-Remaining': String(rateLimit.remaining),
+          },
+        },
+      )
+    }
+
     const formData = await request.formData()
 
     const website = String(formData.get('website') || '')
@@ -99,12 +156,28 @@ export async function POST(request: Request) {
     const email = String(formData.get('email') || '').trim()
     const videoLink = String(formData.get('videoLink') || '').trim()
     const consent = String(formData.get('consent') || '') === 'true'
+    const turnstileToken = String(formData.get('turnstileToken') || '')
 
     if (!fullName || !firstName || !email || !videoLink || !consent) {
       return NextResponse.json(
         {
           ok: false,
           error: 'Merci de compléter les champs obligatoires.',
+        },
+        { status: 400 },
+      )
+    }
+
+    const captcha = await verifyTurnstileToken({
+      token: turnstileToken,
+      ip: clientIP,
+    })
+
+    if (!captcha.ok) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Vérification anti-bot invalide. Merci de réessayer.',
         },
         { status: 400 },
       )

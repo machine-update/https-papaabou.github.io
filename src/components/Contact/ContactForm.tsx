@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { AlertTriangle, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { TurnstileField } from '@/components/security/TurnstileField'
 
 type FormState = {
   fullName: string
@@ -14,6 +15,7 @@ type FormState = {
   message: string
   website: string
   consent: boolean
+  turnstileToken: string
 }
 
 const initialState: FormState = {
@@ -27,9 +29,11 @@ const initialState: FormState = {
   message: '',
   website: '',
   consent: false,
+  turnstileToken: '',
 }
 
 export const ContactForm: React.FC = () => {
+  const captchaEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
   const [form, setForm] = React.useState<FormState>(initialState)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
@@ -49,6 +53,11 @@ export const ContactForm: React.FC = () => {
 
     if (!form.fullName || !form.email || !form.message || !form.consent) {
       setError('Merci de remplir les champs obligatoires.')
+      return
+    }
+
+    if (captchaEnabled && !form.turnstileToken) {
+      setError('Merci de valider la vérification anti-bot.')
       return
     }
 
@@ -205,6 +214,11 @@ export const ContactForm: React.FC = () => {
         />
         <span>J’accepte d’être recontacté(e) à propos de ma demande.</span>
       </label>
+
+      <TurnstileField
+        onTokenChange={(token) => setForm((prev) => ({ ...prev, turnstileToken: token }))}
+        theme="dark"
+      />
 
       <div className="relative z-10" aria-live="polite">
         {error && (

@@ -25,6 +25,12 @@ const databaseURL =
       ? rawDatabaseURL
       : `file:${rawDatabaseURL}`
 
+if (process.env.VERCEL && databaseURL.startsWith('file:')) {
+  throw new Error(
+    'DATABASE_URL must point to a remote database on Vercel. Local SQLite file URLs are not supported in Vercel deployments.',
+  )
+}
+
 export default buildConfig({
   admin: {
     components: {

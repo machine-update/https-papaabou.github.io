@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { TurnstileField } from '@/components/security/TurnstileField'
 
 type CastingState = {
   fullName: string
@@ -14,6 +15,7 @@ type CastingState = {
   message: string
   website: string
   consent: boolean
+  turnstileToken: string
 }
 
 const initialState: CastingState = {
@@ -27,9 +29,11 @@ const initialState: CastingState = {
   message: '',
   website: '',
   consent: false,
+  turnstileToken: '',
 }
 
 export function CastingForm() {
+  const captchaEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
   const [form, setForm] = React.useState<CastingState>(initialState)
   const [file, setFile] = React.useState<File | null>(null)
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -59,6 +63,11 @@ export function CastingForm() {
       return
     }
 
+    if (captchaEnabled && !form.turnstileToken) {
+      setError('Merci de valider la vérification anti-bot.')
+      return
+    }
+
     const payload = new FormData()
     payload.append('fullName', form.fullName)
     payload.append('firstName', form.firstName)
@@ -70,6 +79,7 @@ export function CastingForm() {
     payload.append('message', form.message)
     payload.append('website', form.website)
     payload.append('consent', String(form.consent))
+    payload.append('turnstileToken', form.turnstileToken)
 
     if (file) {
       payload.append('attachment', file)
@@ -215,6 +225,11 @@ export function CastingForm() {
         />
         <span>J’accepte d’être recontacté(e) dans le cadre de ce casting.</span>
       </label>
+
+      <TurnstileField
+        onTokenChange={(token) => setForm((prev) => ({ ...prev, turnstileToken: token }))}
+        theme="dark"
+      />
 
       <div className="relative z-10" aria-live="polite">
         {error && (

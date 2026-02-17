@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { AlertTriangle, ArrowLeft, CheckCircle2, SendHorizontal } from 'lucide-react'
+import { TurnstileField } from '@/components/security/TurnstileField'
 
 import { Reveal } from './Reveal'
 
@@ -16,6 +17,7 @@ type FormState = {
   message: string
   website: string
   consent: boolean
+  turnstileToken: string
 }
 
 type FormErrors = Partial<Record<keyof FormState, string>>
@@ -31,10 +33,12 @@ const initialState: FormState = {
   message: '',
   website: '',
   consent: false,
+  turnstileToken: '',
 }
 
 /* Premium quote request form with inline validation and success/error UI states. */
 export function PrestationsContactForm() {
+  const captchaEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
   const [form, setForm] = React.useState<FormState>(initialState)
   const [errors, setErrors] = React.useState<FormErrors>({})
   const [loading, setLoading] = React.useState(false)
@@ -64,6 +68,9 @@ export function PrestationsContactForm() {
     if (!state.message.trim()) nextErrors.message = 'Décris brièvement ton besoin.'
     if (!state.service.trim()) nextErrors.service = 'Sélectionne le type de prestation.'
     if (!state.consent) nextErrors.consent = 'Ton accord est requis pour être recontacté.'
+    if (captchaEnabled && !state.turnstileToken) {
+      nextErrors.turnstileToken = 'Merci de valider la vérification anti-bot.'
+    }
 
     return nextErrors
   }
@@ -281,6 +288,13 @@ export function PrestationsContactForm() {
           <span>J’accepte d’être recontacté(e) à propos de ma demande.</span>
         </label>
         {errors.consent && <p className="mt-2 text-xs text-[#ff8d8d]">{errors.consent}</p>}
+        <div className="mt-3 grid gap-2">
+          <TurnstileField
+            onTokenChange={(token) => setForm((prev) => ({ ...prev, turnstileToken: token }))}
+            theme="dark"
+          />
+          {errors.turnstileToken && <p className="text-xs text-[#ff8d8d]">{errors.turnstileToken}</p>}
+        </div>
 
         <div className="mt-5 grid gap-3" aria-live="polite">
           {submitError && (

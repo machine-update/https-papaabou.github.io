@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { takeRateLimit } from '@/utilities/rateLimit'
+import { verifyTurnstileToken } from '@/utilities/verifyTurnstile'
 
 type ContactPayload = {
   fullName?: string
@@ -11,6 +13,28 @@ type ContactPayload = {
   phone?: string
   consent?: boolean
   website?: string
+  turnstileToken?: string
+}
+
+const getClientIP = (request: Request): string => {
+  const forwarded = request.headers.get('x-forwarded-for')
+  if (forwarded) return forwarded.split(',')[0]?.trim() || 'unknown'
+
+  return request.headers.get('x-real-ip') || 'unknown'
+}
+
+const isAllowedOrigin = (request: Request): boolean => {
+  const origin = request.headers.get('origin')
+  if (!origin) return true
+
+  const allowedServerURL = process.env.NEXT_PUBLIC_SERVER_URL
+  if (!allowedServerURL) return true
+
+  try {
+    return new URL(origin).host === new URL(allowedServerURL).host
+  } catch {
+    return false
+  }
 }
 
 const escapeHtml = (value: string) =>
@@ -84,6 +108,40 @@ const sendContactEmail = async (data: Required<Pick<ContactPayload, 'fullName' |
 
 export async function POST(request: Request) {
   try {
+    if (!isAllowedOrigin(request)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Origine de la requête non autorisée.',
+        },
+        { status: 403 },
+      )
+    }
+
+    const clientIP = getClientIP(request)
+    const rateLimit = takeRateLimit({
+      key: `contact:${clientIP}`,
+      windowMs: 10 * 60 * 1000,
+      maxHits: 5,
+    })
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Trop de tentatives. Merci de réessayer dans quelques minutes.',
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(rateLimit.retryAfterSec),
+            'X-RateLimit-Limit': String(rateLimit.limit),
+            'X-RateLimit-Remaining': String(rateLimit.remaining),
+          },
+        },
+      )
+    }
+
     const body = (await request.json()) as ContactPayload
 
     // Honeypot field: if filled by bots, return success without processing.
@@ -99,6 +157,31 @@ export async function POST(request: Request) {
         {
           ok: false,
           error: 'Merci de compléter les champs obligatoires.',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (!body.email.includes('@') || body.message.trim().length < 10) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Merci de saisir un email valide et un message plus détaillé.',
+        },
+        { status: 400 },
+      )
+    }
+
+    const captcha = await verifyTurnstileToken({
+      token: body.turnstileToken || '',
+      ip: clientIP,
+    })
+
+    if (!captcha.ok) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Vérification anti-bot invalide. Merci de réessayer.',
         },
         { status: 400 },
       )
