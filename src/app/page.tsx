@@ -237,14 +237,18 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div className="rounded-[1.4rem] h-56 md:h-64 border border-white/10 relative overflow-hidden">
-                  <Image
-                    src="/home/image.webp"
-                    alt="Signature visuelle XKSPROD"
+                  <video
                     className="absolute inset-0 h-full w-full object-cover"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 40vw"
-                    quality={85}
-                  />
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    poster="/home/image.webp"
+                    aria-label="Signature visuelle XKSPROD"
+                  >
+                    <source src="/home/hero-signature-16s.mp4" type="video/mp4" />
+                  </video>
                   <div className="absolute inset-0 bg-black/30" />
                   <div className="absolute inset-0 dot-matrix opacity-25" />
                   <div className="absolute bottom-5 left-6">
