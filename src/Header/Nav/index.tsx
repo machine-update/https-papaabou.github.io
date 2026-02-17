@@ -265,7 +265,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               <button
                 type="button"
                 onClick={() => setSearchOpen(false)}
-                className="menu-trigger flex items-center justify-center"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/5 transition-colors hover:bg-white/10"
                 aria-label="Fermer la recherche"
               >
                 <X className="w-4 h-4 text-white" />

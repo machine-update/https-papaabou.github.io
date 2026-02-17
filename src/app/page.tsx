@@ -180,7 +180,7 @@ export default function HomePage() {
         <div className="absolute inset-0 noise" />
 
         <div className="container relative z-10">
-          <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] items-center">
+          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] items-center">
             <div className="stack-lg">
               <div className="flex items-center gap-3">
                 <span className="pulse-dot" />
@@ -236,7 +236,7 @@ export default function HomePage() {
                     un résultat premium, clair et efficace.
                   </p>
                 </div>
-                <div className="rounded-[1.4rem] h-56 md:h-64 border border-white/10 relative overflow-hidden">
+                <div className="rounded-[1.4rem] h-64 md:h-80 border border-white/10 relative overflow-hidden">
                   <video
                     className="absolute inset-0 h-full w-full object-cover"
                     autoPlay
