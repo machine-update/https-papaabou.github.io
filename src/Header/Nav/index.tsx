@@ -20,6 +20,11 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const menuTriggerRef = React.useRef<HTMLButtonElement | null>(null)
   const pathname = usePathname()
   const router = useRouter()
+  const handleNavClick = React.useCallback(() => {
+    setSearchOpen(false)
+    setIsOpen(false)
+    setIsServicesOpen(false)
+  }, [])
 
   React.useEffect(() => {
     setIsOpen(false)
@@ -78,7 +83,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
     { label: 'Partenaires', href: '/#partenaires' },
   ]
   const desktopNavLinkClass =
-    'relative inline-flex items-center py-1 text-white/95 transition-all duration-300 hover:text-xks-gold hover:[text-shadow:0_0_12px_rgba(219,178,74,0.45)] after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-transparent after:via-[#DBB24A] after:to-transparent after:transition-transform after:duration-300 hover:after:scale-x-100'
+    'relative inline-flex shrink-0 whitespace-nowrap items-center py-1 text-white/95 transition-all duration-300 hover:text-xks-gold hover:[text-shadow:0_0_12px_rgba(219,178,74,0.45)] after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-transparent after:via-[#DBB24A] after:to-transparent after:transition-transform after:duration-300 hover:after:scale-x-100'
 
   return (
     <div className="relative">
@@ -88,6 +93,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             key={item.href}
             href={item.href}
             className={desktopNavLinkClass}
+            onClick={handleNavClick}
             data-track-event="header_nav_click"
             data-track-location="header_desktop"
             data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -99,6 +105,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           <Link
             href="/#services"
             className={desktopNavLinkClass}
+            onClick={handleNavClick}
             data-track-event="header_nav_click"
             data-track-location="header_desktop"
             data-track-label="services"
@@ -111,6 +118,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 key={item.href}
                 href={item.href}
                 className="header-submenu-link"
+                onClick={handleNavClick}
                 data-track-event="header_nav_click"
                 data-track-location="header_desktop_services"
                 data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -125,6 +133,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             key={item.href}
             href={item.href}
             className={desktopNavLinkClass}
+            onClick={handleNavClick}
             data-track-event="header_nav_click"
             data-track-location="header_desktop"
             data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -145,7 +154,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         <button
           type="button"
           onClick={() => setSearchOpen((prev) => !prev)}
-          className="hover:text-xks-gold transition-colors"
+          className="hover:text-xks-gold transition-colors shrink-0"
           data-track-event="header_nav_click"
           data-track-location="header_desktop"
           data-track-label="search_panel"
@@ -182,6 +191,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 key={item.href}
                 href={item.href}
                 className="mobile-menu-link"
+                onClick={handleNavClick}
                 data-track-event="header_nav_click"
                 data-track-location="header_mobile"
                 data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -207,6 +217,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                     key={item.href}
                     href={item.href}
                     className="mobile-submenu-link"
+                    onClick={handleNavClick}
                     data-track-event="header_nav_click"
                     data-track-location="header_mobile_services"
                     data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -221,6 +232,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 key={item.href}
                 href={item.href}
                 className="mobile-menu-link"
+                onClick={handleNavClick}
                 data-track-event="header_nav_click"
                 data-track-location="header_mobile"
                 data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -231,6 +243,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             <Link
               href="/search"
               className="mobile-menu-link"
+              onClick={handleNavClick}
               data-track-event="header_nav_click"
               data-track-location="header_mobile"
               data-track-label="search"
