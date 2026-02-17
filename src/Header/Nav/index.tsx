@@ -162,7 +162,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       <button
         ref={menuTriggerRef}
         type="button"
-        className="menu-trigger flex items-center justify-center"
+        className="menu-trigger md:hidden flex items-center justify-center"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Menu"
         aria-expanded={isOpen}
@@ -175,7 +175,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       </button>
 
       {isOpen && (
-        <div className="mobile-menu-float" ref={mobileMenuRef}>
+        <div className="mobile-menu-float md:hidden" ref={mobileMenuRef}>
           <nav className="mobile-menu-panel">
             {mainLinks.slice(0, 2).map((item) => (
               <Link
