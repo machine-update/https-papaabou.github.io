@@ -44,7 +44,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       page?.title === 'Home' ||
       page?.meta?.description?.includes('open-source website built with Payload'))
 
-  if (!page || isTemplateHome) {
+  if (isTemplateHome || (slug === 'home' && !page)) {
     page = homeStatic
   }
 

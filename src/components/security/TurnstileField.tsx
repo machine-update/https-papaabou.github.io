@@ -28,12 +28,17 @@ type TurnstileFieldProps = {
 
 export const TurnstileField: React.FC<TurnstileFieldProps> = ({ onTokenChange, theme = 'dark' }) => {
   const containerRef = React.useRef<HTMLDivElement | null>(null)
+  const onTokenChangeRef = React.useRef(onTokenChange)
   const [ready, setReady] = React.useState(false)
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
 
   React.useEffect(() => {
-    onTokenChange('')
+    onTokenChangeRef.current = onTokenChange
   }, [onTokenChange])
+
+  React.useEffect(() => {
+    onTokenChangeRef.current('')
+  }, [])
 
   React.useEffect(() => {
     if (!siteKey) return
@@ -66,11 +71,11 @@ export const TurnstileField: React.FC<TurnstileFieldProps> = ({ onTokenChange, t
     window.turnstile.render(containerRef.current, {
       sitekey: siteKey,
       theme,
-      callback: (token: string) => onTokenChange(token),
-      'expired-callback': () => onTokenChange(''),
-      'error-callback': () => onTokenChange(''),
+      callback: (token: string) => onTokenChangeRef.current(token),
+      'expired-callback': () => onTokenChangeRef.current(''),
+      'error-callback': () => onTokenChangeRef.current(''),
     })
-  }, [onTokenChange, ready, siteKey, theme])
+  }, [ready, siteKey, theme])
 
   if (!siteKey) {
     return null

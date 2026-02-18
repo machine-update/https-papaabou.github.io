@@ -96,7 +96,7 @@ const serviceSchema = {
     name: 'XKSPROD',
     url: 'https://xksprod.com',
   },
-  areaServed: 'Europe',
+  areaServed: 'France, Europe, Afrique (notamment Sénégal)',
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Prestations audiovisuelles premium',

@@ -34,7 +34,7 @@ export default function AboutPage() {
             <div className="flex flex-wrap gap-2 text-xs uppercase tracking-[0.2em] text-white/65">
               <span className="pill">15+ ans d’expérience</span>
               <span className="pill">Exécution premium</span>
-              <span className="pill">Europe</span>
+              <span className="pill">Europe & Afrique</span>
             </div>
             <div className="card glass p-3">
               <div className="overflow-hidden rounded-[0.9rem] border border-white/10">

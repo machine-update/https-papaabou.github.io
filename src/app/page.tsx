@@ -111,7 +111,7 @@ const faqItems = [
   },
   {
     q: 'Intervenez-vous hors France ?',
-    a: 'Oui. Le studio opère en France et en Europe selon le format du projet.',
+    a: 'Oui. Le studio intervient en France, en Europe et en Afrique, notamment au Sénégal, selon le format du projet.',
   },
 ]
 
@@ -156,7 +156,7 @@ const organizationLdJson = {
   url: 'https://www.xksprod.com',
   description:
     'Studio premium de production audiovisuelle, management d’artistes et événements live.',
-  areaServed: 'Europe',
+  areaServed: 'France, Europe, Afrique (notamment Sénégal)',
 }
 
 const dossierImageBySlug: Record<string, StaticImageData> = {
@@ -256,7 +256,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  {['15+ ans', '60+ projets', 'Europe'].map((item) => (
+                  {['15+ ans', '60+ projets', 'Europe & Afrique'].map((item) => (
                     <div key={item} className="card glass p-4 text-center text-sm">
                       {item}
                     </div>
@@ -290,7 +290,9 @@ export default function HomePage() {
         <div className="grid gap-8 lg:grid-cols-[0.6fr_0.4fr] items-start">
           <div className="stack-lg">
             <span className="eyebrow">Notre histoire</span>
-            <h2 className="title-display text-4xl md:text-5xl max-w-[54rem]">{companyStory.title}</h2>
+            <h2 className="title-display text-3xl md:text-4xl lg:text-[3.1rem] leading-[1.08] max-w-[52rem]">
+              {companyStory.title}
+            </h2>
             <p className="lead">{companyStory.body}</p>
             <p className="text-white/75 text-lg">{companyStory.body2}</p>
             <aside className="card glass p-6 stack-sm max-w-[38rem]">
@@ -323,7 +325,7 @@ export default function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <span className="eyebrow">Méthode</span>
-              <h2 className="title-display text-4xl md:text-5xl">Un process clair, sans friction.</h2>
+              <h2 className="title-display text-3xl md:text-4xl lg:text-[3rem]">Un process clair, sans friction.</h2>
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -343,7 +345,7 @@ export default function HomePage() {
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
               <span className="eyebrow">Réalisations</span>
-              <h2 className="title-display text-3xl md:text-4xl">Nos productions</h2>
+              <h2 className="title-display text-[2rem] md:text-3xl lg:text-[2.6rem]">Nos productions</h2>
             </div>
             <Link href="/productions" className="btn-ghost rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em]">
               Voir tout
@@ -397,7 +399,7 @@ export default function HomePage() {
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
               <span className="eyebrow">Artistes à l’affiche</span>
-              <h2 className="title-display text-4xl md:text-5xl">Talents accompagnés</h2>
+              <h2 className="title-display text-3xl md:text-4xl lg:text-[3rem]">Talents accompagnés</h2>
             </div>
             <Link href="/artistes" className="btn-ghost rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em]">
               Voir la page artistes
@@ -448,7 +450,7 @@ export default function HomePage() {
           <div className="rounded-[1.45rem] bg-black/65 p-8 md:p-10 stack-lg">
             <div>
               <span className="eyebrow">Formats d’accompagnement</span>
-              <h2 className="title-display text-4xl md:text-5xl">Choisis le rythme qui colle à ton projet.</h2>
+              <h2 className="title-display text-3xl md:text-4xl lg:text-[3rem]">Choisis le rythme qui colle à ton projet.</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {offerTiers.map((tier) => (
@@ -467,7 +469,7 @@ export default function HomePage() {
         <div className="stack-lg">
           <div>
             <span className="eyebrow">Partenaires</span>
-            <h2 className="title-display text-4xl md:text-5xl">Ils font confiance à XKSPROD</h2>
+            <h2 className="title-display text-3xl md:text-4xl lg:text-[3rem]">Ils font confiance à XKSPROD</h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {partners.map((partner) => (
@@ -487,7 +489,7 @@ export default function HomePage() {
         <div className="stack-lg max-w-[56rem]">
           <div>
             <span className="eyebrow">FAQ</span>
-            <h2 className="title-display text-4xl md:text-5xl">Questions fréquentes</h2>
+            <h2 className="title-display text-3xl md:text-4xl lg:text-[3rem]">Questions fréquentes</h2>
           </div>
           <div className="grid gap-3">
             {faqItems.map((item) => (

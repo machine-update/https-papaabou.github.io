@@ -24,22 +24,6 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
     setIsOpen(false)
     setIsServicesOpen(false)
   }, [])
-  const navigateWithFallback = React.useCallback(
-    (href: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-
-      handleNavClick()
-
-      const initialLocation = `${window.location.pathname}${window.location.search}${window.location.hash}`
-      window.setTimeout(() => {
-        const currentLocation = `${window.location.pathname}${window.location.search}${window.location.hash}`
-        if (currentLocation === initialLocation) {
-          window.location.assign(href)
-        }
-      }, 500)
-    },
-    [handleNavClick],
-  )
 
   React.useEffect(() => {
     setIsOpen(false)
@@ -108,7 +92,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             key={item.href}
             href={item.href}
             className={desktopNavLinkClass}
-            onClick={navigateWithFallback(item.href)}
+            onClick={handleNavClick}
             data-track-event="header_nav_click"
             data-track-location="header_desktop"
             data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -120,7 +104,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           <Link
             href="/#services"
             className={desktopNavLinkClass}
-            onClick={navigateWithFallback('/#services')}
+            onClick={handleNavClick}
             data-track-event="header_nav_click"
             data-track-location="header_desktop"
             data-track-label="services"
@@ -133,7 +117,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 key={item.href}
                 href={item.href}
                 className="header-submenu-link"
-                onClick={navigateWithFallback(item.href)}
+                onClick={handleNavClick}
                 data-track-event="header_nav_click"
                 data-track-location="header_desktop_services"
                 data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -148,7 +132,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             key={item.href}
             href={item.href}
             className={desktopNavLinkClass}
-            onClick={navigateWithFallback(item.href)}
+            onClick={handleNavClick}
             data-track-event="header_nav_click"
             data-track-location="header_desktop"
             data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -186,15 +170,15 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       <button
         ref={menuTriggerRef}
         type="button"
-        className="menu-trigger md:hidden flex items-center justify-center"
+        className="md:hidden fixed top-4 right-4 z-[110] h-10 w-10 rounded-full border border-white/15 bg-black/70 backdrop-blur flex items-center justify-center"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Menu"
         aria-expanded={isOpen}
       >
-        <span className="menu-bars" aria-hidden>
-          <span />
-          <span />
-          <span />
+        <span className="grid w-4 gap-1" aria-hidden>
+          <span className="block h-0.5 rounded-full bg-white/90" />
+          <span className="block h-0.5 rounded-full bg-white/90" />
+          <span className="block h-0.5 rounded-full bg-white/90" />
         </span>
       </button>
 
@@ -206,7 +190,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 key={item.href}
                 href={item.href}
                 className="mobile-menu-link"
-                onClick={navigateWithFallback(item.href)}
+                onClick={handleNavClick}
                 data-track-event="header_nav_click"
                 data-track-location="header_mobile"
                 data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -232,7 +216,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                     key={item.href}
                     href={item.href}
                     className="mobile-submenu-link"
-                    onClick={navigateWithFallback(item.href)}
+                    onClick={handleNavClick}
                     data-track-event="header_nav_click"
                     data-track-location="header_mobile_services"
                     data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -247,7 +231,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 key={item.href}
                 href={item.href}
                 className="mobile-menu-link"
-                onClick={navigateWithFallback(item.href)}
+                onClick={handleNavClick}
                 data-track-event="header_nav_click"
                 data-track-location="header_mobile"
                 data-track-label={item.label.toLowerCase().replace(/\s+/g, '_')}
@@ -258,7 +242,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             <Link
               href="/search"
               className="mobile-menu-link"
-              onClick={navigateWithFallback('/search')}
+              onClick={handleNavClick}
               data-track-event="header_nav_click"
               data-track-location="header_mobile"
               data-track-label="search"
