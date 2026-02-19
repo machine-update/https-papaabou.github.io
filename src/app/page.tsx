@@ -83,16 +83,46 @@ const offerTiers = [
     name: 'Sprint Créatif',
     duration: '2 à 3 semaines',
     fit: 'Pour lancer une campagne ou un format test rapidement.',
+    visuals: [
+      {
+        src: '/home/formats/sprint-brainstorm-studio.webp',
+        alt: 'Equipe créative en studio autour d’un écran avec moodboard et storyboard en préparation.',
+      },
+      {
+        src: '/home/formats/sprint-tournage-dynamique.webp',
+        alt: 'Tournage dynamique avec caméra à l’épaule et lumière naturelle sur un plateau léger.',
+      },
+    ],
   },
   {
     name: 'Production Signature',
     duration: '4 à 8 semaines',
     fit: 'Pour un film de marque, une série live ou un dispositif complet.',
+    visuals: [
+      {
+        src: '/home/formats/signature-plateau-cinema.webp',
+        alt: 'Plateau cinéma structuré avec caméra sur rails et lumière contrôlée.',
+      },
+      {
+        src: '/home/formats/signature-realisateur-monitor.webp',
+        alt: 'Réalisateur supervisant un retour image sur moniteur professionnel pendant le tournage.',
+      },
+    ],
   },
   {
     name: 'Partenariat Long Terme',
     duration: 'Trimestriel / Annuel',
     fit: 'Pour structurer un calendrier éditorial et une direction artistique continue.',
+    visuals: [
+      {
+        src: '/home/formats/partenariat-reunion-strategique.webp',
+        alt: 'Réunion stratégique avec équipe diverse et planning éditorial visible.',
+      },
+      {
+        src: '/home/formats/partenariat-shooting-lifestyle.webp',
+        alt: 'Shooting lifestyle premium en lumière chaude pour un suivi branding long terme.',
+      },
+    ],
   },
 ]
 
@@ -454,7 +484,27 @@ export default function HomePage() {
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {offerTiers.map((tier) => (
-                <article key={tier.name} className="card glass p-5 stack-sm">
+                <article key={tier.name} className="group card glass p-4 md:p-5 stack-sm overflow-hidden">
+                  <div className="grid grid-cols-2 gap-2">
+                    {tier.visuals.map((visual) => (
+                      <figure
+                        key={visual.src}
+                        className="relative aspect-[16/9] overflow-hidden rounded-xl border border-white/10 bg-black/60"
+                      >
+                        <Image
+                          src={visual.src}
+                          alt={visual.alt}
+                          fill
+                          loading="lazy"
+                          sizes="(min-width: 1536px) 360px, (min-width: 1280px) 300px, (min-width: 1024px) 280px, (min-width: 768px) 30vw, 45vw"
+                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                        />
+                        <div className="absolute inset-0 bg-black/50" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/40 to-black/35" />
+                        <div className="absolute inset-0 ring-1 ring-inset ring-[#f19b32]/20" />
+                      </figure>
+                    ))}
+                  </div>
                   <h3 className="text-2xl">{tier.name}</h3>
                   <p className="text-xks-gold text-sm uppercase tracking-[0.2em]">{tier.duration}</p>
                   <p className="text-white/75">{tier.fit}</p>

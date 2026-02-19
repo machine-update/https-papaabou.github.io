@@ -801,7 +801,6 @@ html[data-theme="light"] {
     border-color: rgba(0, 0, 0, 0.14) !important;
     color: rgba(35, 35, 35, 0.72) !important;
   }
-
   [data-theme="light"] .home-story-modern {
     position: relative;
     border-radius: 1.35rem;
