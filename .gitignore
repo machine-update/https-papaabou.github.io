@@ -8,10 +8,14 @@ node_modules
 
 # Payload default media upload directory
 public/media/
+public/uploads/
 
 public/robots.txt
 public/sitemap*.xml
 
+# Local DB / Prisma
+frontend.db
+*.db
 
 # Playwright
 node_modules/
