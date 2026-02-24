@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { ArtistPhoto } from '@/components/ArtistPhoto'
-import { getArtistBySlug } from '@/data/artists'
+import { getPublicArtistBySlug } from '@/lib/public-content'
 
 type Args = {
   params: Promise<{
@@ -16,7 +16,7 @@ export const dynamicParams = true
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
-  const artist = getArtistBySlug(slug)
+  const artist = await getPublicArtistBySlug(slug)
 
   if (!artist) {
     return { title: 'Artiste | XKSPROD' }
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 
 export default async function ArtistDetailPage({ params }: Args) {
   const { slug } = await params
-  const artist = getArtistBySlug(slug)
+  const artist = await getPublicArtistBySlug(slug)
 
   if (!artist) {
     notFound()

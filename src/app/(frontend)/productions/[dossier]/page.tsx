@@ -4,11 +4,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { SectionFadeIn } from '@/components/SectionFadeIn'
-import {
-  getDossierBySlug,
-  getProductionsByDossierSlug,
-  productionDossiers,
-} from '@/data/productions'
+import { getPublicProductionDossiers, getPublicProductionsByDossierSlug } from '@/lib/public-content'
 
 type Args = {
   params: Promise<{
@@ -17,15 +13,17 @@ type Args = {
 }
 
 export async function generateStaticParams() {
+  const productionDossiers = await getPublicProductionDossiers()
   return productionDossiers.map((dossier) => ({ dossier: dossier.slug }))
 }
 
-export const dynamicParams = false
+export const dynamicParams = true
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { dossier: dossierParam } = await params
   const dossierSlug = decodeURIComponent(dossierParam).toLowerCase()
-  const dossier = getDossierBySlug(dossierSlug)
+  const allDossiers = await getPublicProductionDossiers()
+  const dossier = allDossiers.find((item) => item.slug === dossierSlug) || null
 
   if (!dossier) {
     return { title: 'Dossier introuvable | XKSPROD' }
@@ -40,13 +38,14 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 export default async function ProductionDossierPage({ params }: Args) {
   const { dossier: dossierParam } = await params
   const dossierSlug = decodeURIComponent(dossierParam).toLowerCase()
-  const dossier = getDossierBySlug(dossierSlug)
+  const allDossiers = await getPublicProductionDossiers()
+  const dossier = allDossiers.find((item) => item.slug === dossierSlug) || null
 
   if (!dossier) {
     notFound()
   }
 
-  const items = getProductionsByDossierSlug(dossier.slug)
+  const items = await getPublicProductionsByDossierSlug(dossier.slug)
   const dossierDisplayTitle = dossier.slug === 'dakarfaitsacomedy' ? 'Dakar Fait Sa Comedy' : dossier.name
   const youtubeId = getYouTubeId(dossier.youtubeUrl)
   const videoLead = `Une immersion rapide dans l'univers ${dossierDisplayTitle}: énergie de scène, direction artistique et identité du format.`

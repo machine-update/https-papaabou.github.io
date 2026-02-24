@@ -3,14 +3,16 @@ import Link from 'next/link'
 import React from 'react'
 
 import { ArtistPhoto } from '@/components/ArtistPhoto'
-import { artists } from '@/data/artists'
+import { getPublicArtists } from '@/lib/public-content'
 
 export const metadata: Metadata = {
   title: 'Artistes | XKSPROD',
   description: 'Découvrez les artistes accompagnés par XKSPROD.',
 }
 
-export default function ArtistesPage() {
+export default async function ArtistesPage() {
+  const artists = await getPublicArtists()
+
   return (
     <main className="bg-cinema text-white pt-20 md:pt-24 pb-20 md:pb-28">
       <section className="container mb-12">

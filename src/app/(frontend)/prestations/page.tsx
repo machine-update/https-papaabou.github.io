@@ -16,6 +16,7 @@ import { CardService } from '@/components/prestations/CardService'
 import { PrestationsContactForm } from '@/components/prestations/ContactForm'
 import { ProgressBar } from '@/components/prestations/ProgressBar'
 import { Reveal } from '@/components/prestations/Reveal'
+import { getPublicPrestations } from '@/lib/public-content'
 
 export const metadata: Metadata = {
   title: 'Prestations Premium | XKSPROD',
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     'Conseil stratégique, direction artistique, production exécutive, captation live, post-production premium et diffusion & amplification. Demandez votre devis XKSPROD.',
 }
 
-const services = [
+const servicesFallback = [
   {
     id: 'conseil-strategique',
     title: 'Conseil stratégique',
@@ -100,7 +101,7 @@ const serviceSchema = {
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Prestations audiovisuelles premium',
-    itemListElement: services.map((item) => ({
+    itemListElement: servicesFallback.map((item) => ({
       '@type': 'Offer',
       itemOffered: {
         '@type': 'Service',
@@ -111,7 +112,17 @@ const serviceSchema = {
   },
 }
 
-export default function PrestationsPage() {
+export default async function PrestationsPage() {
+  const prestations = await getPublicPrestations()
+  const icons = [Compass, Palette, Settings, Camera, Clapperboard, Megaphone]
+  const services = (prestations.length ? prestations : servicesFallback).map((item, index) => ({
+    id: `service-${index + 1}`,
+    title: item.title,
+    description: item.description,
+    tags: item.tags?.length ? item.tags : ['Service'],
+    icon: React.createElement(icons[index % icons.length], { className: 'h-4 w-4' }),
+  }))
+
   return (
     <main className="relative overflow-hidden bg-[#010101] pb-20 pt-20 text-white md:pb-28 md:pt-24">
       <script

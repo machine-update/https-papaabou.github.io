@@ -4,6 +4,7 @@ import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
+import { headers } from 'next/headers'
 
 import { ConversionTracker } from '@/components/ConversionTracker'
 import { Footer } from '@/Footer/Component'
@@ -17,6 +18,10 @@ import { getServerSideURL } from '@/utilities/getURL'
 import './globals.css'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headerList = await headers()
+  const pathname = headerList.get('x-pathname') || ''
+  const hidePublicChrome = pathname.startsWith('/admin') || pathname.startsWith('/payload-admin')
+
   return (
     <html
       className={cn(GeistSans.variable, GeistMono.variable)}
@@ -31,10 +36,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <Providers>
           <ConversionTracker />
-          <Header />
+          {hidePublicChrome ? null : <Header />}
           {children}
-          <Footer />
-          <StickyContactCTA />
+          {hidePublicChrome ? null : <Footer />}
+          {hidePublicChrome ? null : <StickyContactCTA />}
         </Providers>
       </body>
     </html>

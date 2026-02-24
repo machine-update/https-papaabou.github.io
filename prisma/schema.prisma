@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("ADMIN_DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum ProductionStatus {
+  DRAFT
+  IN_PRODUCTION
+  COMPLETED
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  password  String
+  role      Role     @default(EDITOR)
+  createdAt DateTime @default(now())
+  logs      AdminActivityLog[]
+
+  @@index([createdAt])
+}
+
+model Project {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  slug        String   @unique
+  description String
+  image       String
+  category    String
+  createdAt   DateTime @default(now())
+
+  @@index([slug])
+  @@index([createdAt])
+}
+
+model Service {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Prestation {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Partenaire {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  logo      String?
+  website   String?
+  country   String?
+  region    String?
+  revenueAmount Int @default(0)
+  riskScore Float @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  productions ProductionPartenaire[]
+
+  @@index([createdAt])
+  @@index([isActive])
+  @@index([country])
+  @@index([region])
+}
+
+model Production {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  slug        String   @unique
+  description String
+  image       String
+  category    String
+  youtubeUrl  String?
+  country     String?
+  region      String?
+  viewCount   Int @default(0)
+  watchTimeMinutes Int @default(0)
+  abandonmentRate Float @default(0)
+  revenueAmount Int @default(0)
+  costAmount  Int @default(0)
+  status      ProductionStatus @default(DRAFT)
+  isActive    Boolean @default(true)
+  tags        Json?
+  createdAt   DateTime @default(now())
+  artistes    ProductionArtist[]
+  partenaires ProductionPartenaire[]
+
+  @@index([createdAt])
+  @@index([category])
+  @@index([status])
+  @@index([isActive])
+  @@index([slug])
+  @@index([country])
+  @@index([region])
+}
+
+model Artiste {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String
+  slug           String   @unique
+  role           String
+  country        String?
+  region         String?
+  performanceScore Float @default(0)
+  shortBio       String?
+  bio            String
+  photo          String
+  stats          Json?
+  highlights     Json?
+  bookingFormats Json?
+  socials        Json?
+  featured       Boolean  @default(false)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  productions    ProductionArtist[]
+
+  @@index([createdAt])
+  @@index([featured])
+  @@index([isActive])
+  @@index([slug])
+  @@index([country])
+  @@index([region])
+}
+
+model ProductionArtist {
+  productionId String @db.Uuid
+  artisteId    String @db.Uuid
+  createdAt    DateTime @default(now())
+  production   Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  artiste      Artiste @relation(fields: [artisteId], references: [id], onDelete: Cascade)
+
+  @@id([productionId, artisteId])
+  @@index([createdAt])
+}
+
+model ProductionPartenaire {
+  productionId String @db.Uuid
+  partenaireId String @db.Uuid
+  createdAt    DateTime @default(now())
+  production   Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  partenaire   Partenaire @relation(fields: [partenaireId], references: [id], onDelete: Cascade)
+
+  @@id([productionId, partenaireId])
+  @@index([createdAt])
+}
+
+model AdminActivityLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String?  @db.Uuid
+  email       String
+  action      String
+  entity      String
+  entityId     String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  user        User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([entity])
+  @@index([userId])
+}

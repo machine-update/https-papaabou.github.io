@@ -1,18 +1,17 @@
 import type { Metadata } from 'next'
-import Image, { type StaticImageData } from 'next/image'
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { ExternalLink } from 'lucide-react'
 import { PartnerLogo } from '@/components/PartnerLogo'
 import { ArtistPhoto } from '@/components/ArtistPhoto'
 import { SectionFadeIn } from '@/components/SectionFadeIn'
-import { featuredArtists } from '@/data/artists'
-import { getProductionsByDossierSlug, productionDossiers } from '@/data/productions'
-import ahmedSyllaImg from './(frontend)/productions/[dossier]/ahmedsylla.png'
-import dakarFaitSaComedyImg from './(frontend)/productions/[dossier]/dakarfaitsacomedy.png'
-import hamiltonImg from './(frontend)/productions/[dossier]/hamilton.png'
-import myComedyJamImg from './(frontend)/productions/[dossier]/mycomedyjamd.png'
-import sambaShowImg from './(frontend)/productions/[dossier]/sambashow.png'
+import {
+  getPublicFeaturedArtists,
+  getPublicPartenaires,
+  getPublicPrestations,
+  getPublicProductionDossiers,
+} from '@/lib/public-content'
 
 export const metadata: Metadata = {
   title: 'XKSPROD | Studio premium audiovisuel & artistique',
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
     'Studio premium de production audiovisuelle, management d’artistes et événements live. Expériences narratives, direction artistique et exécution maîtrisée.',
 }
 
-const services = [
+const servicesFallback = [
   {
     title: 'Production audiovisuelle',
     desc: 'Films de marque, captations live, campagnes artistiques et contenus premium conçus pour durer.',
@@ -145,7 +144,7 @@ const faqItems = [
   },
 ]
 
-const partners = [
+const partnersFallback = [
   {
     name: 'MyTeleVision',
     mark: 'MYTELEVISION',
@@ -189,15 +188,18 @@ const organizationLdJson = {
   areaServed: 'France, Europe, Afrique (notamment Sénégal)',
 }
 
-const dossierImageBySlug: Record<string, StaticImageData> = {
-  lesambashow: sambaShowImg,
-  mycomedyjam: myComedyJamImg,
-  claytonhamilton: hamiltonImg,
-  'spectacle-ahmed-sylla': ahmedSyllaImg,
-  dakarfaitsacomedy: dakarFaitSaComedyImg,
-}
+export default async function HomePage() {
+  const [featuredArtists, publicDossiers, publicPartners, publicPrestations] = await Promise.all([
+    getPublicFeaturedArtists(),
+    getPublicProductionDossiers(),
+    getPublicPartenaires(),
+    getPublicPrestations(),
+  ])
+  const services = publicPrestations.length
+    ? publicPrestations.map((item) => ({ title: item.title, desc: item.description, tags: item.tags }))
+    : servicesFallback
+  const partners = publicPartners.length ? publicPartners : partnersFallback
 
-export default function HomePage() {
   return (
     <main className="bg-cinema text-white home-no-serif">
       <script
@@ -383,28 +385,19 @@ export default function HomePage() {
           </div>
 
           <div className="grid gap-5 lg:grid-cols-3">
-            {productionDossiers.map((dossier) => {
-              const count = getProductionsByDossierSlug(dossier.slug).length
-              const dossierImage = dossierImageBySlug[dossier.slug]
-
+            {publicDossiers.map((dossier) => {
               return (
                 <article key={dossier.slug} className="production-card group">
                   <Link href={`/productions/${dossier.slug}`} className="block">
                     <div className="production-media">
-                      <Image
-                        src={dossierImage}
-                        alt={dossier.name}
-                        className="production-image production-dossier-image"
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        quality={86}
-                      />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={dossier.coverImage} alt={dossier.name} className="production-image production-dossier-image" />
                     </div>
                   </Link>
                   <div className="production-content">
                     <div className="flex items-start justify-between gap-3">
                       <p className="text-xs uppercase tracking-[0.2em] text-white/55">Collection</p>
-                      <span className="pill text-[11px] text-white/70">{count} items</span>
+                      <span className="pill text-[11px] text-white/70">{dossier.count} items</span>
                     </div>
                     <h3 className="production-directory-title">{dossier.name}</h3>
                     <p className="text-white/70">{dossier.description}</p>

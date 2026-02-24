@@ -1,15 +1,9 @@
 import type { Metadata } from 'next'
-import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
 import { SectionFadeIn } from '@/components/SectionFadeIn'
-import { getProductionsByDossierSlug, productionDossiers } from '@/data/productions'
-import ahmedSyllaImg from './[dossier]/ahmedsylla.png'
-import dakarFaitSaComedyImg from './[dossier]/dakarfaitsacomedy.png'
-import hamiltonImg from './[dossier]/hamilton.png'
-import myComedyJamImg from './[dossier]/mycomedyjamd.png'
-import sambaShowImg from './[dossier]/sambashow.png'
+import { getPublicProductionDossiers } from '@/lib/public-content'
 
 export const metadata: Metadata = {
   title: 'Productions | XKSPROD',
@@ -17,15 +11,9 @@ export const metadata: Metadata = {
     'Toutes les productions XKSPROD: direction artistique, production exécutive et contenus sur mesure.',
 }
 
-const dossierImageBySlug: Record<string, StaticImageData> = {
-  lesambashow: sambaShowImg,
-  mycomedyjam: myComedyJamImg,
-  claytonhamilton: hamiltonImg,
-  'spectacle-ahmed-sylla': ahmedSyllaImg,
-  dakarfaitsacomedy: dakarFaitSaComedyImg,
-}
+export default async function ProductionsPage() {
+  const productionDossiers = await getPublicProductionDossiers()
 
-export default function ProductionsPage() {
   return (
     <main className="bg-cinema text-white pt-24 md:pt-28 pb-24 md:pb-32 productions-page-modern">
       <SectionFadeIn className="container mb-12 md:mb-16">
@@ -54,28 +42,19 @@ export default function ProductionsPage() {
       <SectionFadeIn className="container">
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 productions-grid-modern">
           {productionDossiers.map((dossier) => {
-            const count = getProductionsByDossierSlug(dossier.slug).length
-            const dossierImage = dossierImageBySlug[dossier.slug]
-
             return (
               <article key={dossier.slug} className="production-card productions-modern-card group">
                 <Link href={`/productions/${dossier.slug}`} className="block">
                   <div className="production-media">
-                    <Image
-                      src={dossierImage}
-                      alt={dossier.name}
-                      className="production-image production-dossier-image"
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      quality={86}
-                    />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={dossier.coverImage} alt={dossier.name} className="production-image production-dossier-image" />
                   </div>
                 </Link>
                 <div className="production-content">
                   <p className="text-xs uppercase tracking-[0.2em] text-white/55">Collection</p>
                   <h2 className="production-directory-title">{dossier.name}</h2>
                   <p className="text-white/70">{dossier.description}</p>
-                  <div className="production-badge">{count} items</div>
+                  <div className="production-badge">{dossier.count} items</div>
                   <div>
                     <Link
                       href={`/productions/${dossier.slug}`}
