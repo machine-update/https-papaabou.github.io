@@ -20,7 +20,7 @@ import './globals.css'
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const headerList = await headers()
   const pathname = headerList.get('x-pathname') || ''
-  const hidePublicChrome = pathname.startsWith('/admin') || pathname.startsWith('/payload-admin')
+  const hidePublicChrome = pathname.startsWith('/admin') || pathname.startsWith('/payload-admin') || pathname.startsWith('/login')
 
   return (
     <html

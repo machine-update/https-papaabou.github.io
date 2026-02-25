@@ -38,12 +38,13 @@ export async function middleware(request: NextRequest) {
 
   const adminPath = isAdminPath(pathname)
   const adminApi = isAdminApi(pathname)
+  const apiPath = pathname.startsWith('/api/')
 
   if (APP_SURFACE === 'public' && (adminPath || adminApi)) {
     return redirectForSurface(request, 'public')
   }
 
-  if (APP_SURFACE === 'admin' && !adminPath && !adminApi) {
+  if (APP_SURFACE === 'admin' && !adminPath && !apiPath) {
     return redirectForSurface(request, 'admin')
   }
 
