@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { projectSchema } from '@/lib/validation'
 import { getAuthUserFromRequest } from '@/lib/api-auth'
+import { revalidateGlobalPublicContent } from '@/lib/public-revalidate'
 
 function deny() {
   return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -35,6 +36,8 @@ export async function PUT(
       data: parsed.data,
     })
 
+    revalidateGlobalPublicContent()
+
     return NextResponse.json({ data: updated })
   } catch (error) {
     console.error('PUT /api/projects/[id] failed', error)
@@ -56,6 +59,8 @@ export async function DELETE(
     const { id } = await params
 
     await prisma.project.delete({ where: { id } })
+
+    revalidateGlobalPublicContent()
 
     return NextResponse.json({ ok: true })
   } catch (error) {

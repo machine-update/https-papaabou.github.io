@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { projectSchema } from '@/lib/validation'
 import { getAuthUserFromRequest } from '@/lib/api-auth'
+import { revalidateGlobalPublicContent } from '@/lib/public-revalidate'
 
 function deny() {
   return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -41,6 +42,8 @@ export async function POST(request: NextRequest) {
     const created = await prisma.project.create({
       data: parsed.data,
     })
+
+    revalidateGlobalPublicContent()
 
     return NextResponse.json({ data: created }, { status: 201 })
   } catch (error) {

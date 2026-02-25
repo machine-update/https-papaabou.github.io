@@ -4,6 +4,7 @@ import { artisteSchema } from '@/lib/validation'
 import { guardRateLimit, requireAdmin } from '@/lib/api-guard'
 import { logAdminActivity } from '@/lib/admin-activity'
 import { seedArtistsFromPublicIfEmpty } from '@/lib/seed-public-data'
+import { revalidateAfterArtisteMutation } from '@/lib/public-revalidate'
 
 export async function GET(request: NextRequest) {
   try {
@@ -88,6 +89,8 @@ export async function POST(request: NextRequest) {
       entityId: created.id,
       metadata: { name: created.name },
     })
+
+    revalidateAfterArtisteMutation({ slug: created.slug })
 
     return NextResponse.json({ data: created }, { status: 201 })
   } catch (error) {

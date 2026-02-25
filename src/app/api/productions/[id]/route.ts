@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { productionSchema } from '@/lib/validation'
 import { guardRateLimit, requireAdmin } from '@/lib/api-guard'
 import { logAdminActivity } from '@/lib/admin-activity'
+import { revalidateAfterProductionMutation } from '@/lib/public-revalidate'
 
 function toArray(input: unknown) {
   if (!Array.isArray(input)) return []
@@ -28,6 +29,10 @@ export async function PUT(
     }
 
     const { id } = await params
+    const existing = await prisma.production.findUnique({
+      where: { id },
+      select: { category: true },
+    })
     const artisteIds = toArray(parsed.data.artisteIds)
     const partenaireIds = toArray(parsed.data.partenaireIds)
 
@@ -70,6 +75,11 @@ export async function PUT(
       metadata: { title: updated.title, status: updated.status },
     })
 
+    revalidateAfterProductionMutation({
+      category: updated.category,
+      previousCategory: existing?.category,
+    })
+
     return NextResponse.json({ data: updated })
   } catch (error) {
     console.error('PUT /api/productions/[id] failed', error)
@@ -89,6 +99,10 @@ export async function DELETE(
     if (auth.errorResponse) return auth.errorResponse
 
     const { id } = await params
+    const existing = await prisma.production.findUnique({
+      where: { id },
+      select: { category: true },
+    })
 
     await prisma.production.delete({ where: { id } })
 
@@ -99,6 +113,8 @@ export async function DELETE(
       entity: 'PRODUCTION',
       entityId: id,
     })
+
+    revalidateAfterProductionMutation({ previousCategory: existing?.category })
 
     return NextResponse.json({ ok: true })
   } catch (error) {

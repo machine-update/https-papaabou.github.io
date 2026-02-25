@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { prestationSchema } from '@/lib/validation'
 import { guardRateLimit, requireAdmin } from '@/lib/api-guard'
 import { logAdminActivity } from '@/lib/admin-activity'
+import { revalidateGlobalPublicContent } from '@/lib/public-revalidate'
 
 export async function GET(request: NextRequest) {
   try {
@@ -65,6 +66,8 @@ export async function POST(request: NextRequest) {
       entityId: created.id,
       metadata: { title: created.title },
     })
+
+    revalidateGlobalPublicContent()
 
     return NextResponse.json({ data: created }, { status: 201 })
   } catch (error) {

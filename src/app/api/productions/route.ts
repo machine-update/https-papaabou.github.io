@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { productionSchema } from '@/lib/validation'
 import { guardRateLimit, requireAdmin } from '@/lib/api-guard'
 import { logAdminActivity } from '@/lib/admin-activity'
+import { revalidateAfterProductionMutation } from '@/lib/public-revalidate'
 
 function toArray(input: unknown) {
   if (!Array.isArray(input)) return []
@@ -118,6 +119,8 @@ export async function POST(request: NextRequest) {
       entityId: created.id,
       metadata: { title: created.title, status: created.status },
     })
+
+    revalidateAfterProductionMutation({ category: created.category })
 
     return NextResponse.json({ data: created }, { status: 201 })
   } catch (error) {

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { artisteSchema } from '@/lib/validation'
 import { guardRateLimit, requireAdmin } from '@/lib/api-guard'
 import { logAdminActivity } from '@/lib/admin-activity'
+import { revalidateAfterArtisteMutation } from '@/lib/public-revalidate'
 
 export async function PUT(
   request: NextRequest,
@@ -23,6 +24,10 @@ export async function PUT(
     }
 
     const { id } = await params
+    const existing = await prisma.artiste.findUnique({
+      where: { id },
+      select: { slug: true },
+    })
 
     const updated = await prisma.artiste.update({
       where: { id },
@@ -45,6 +50,8 @@ export async function PUT(
       metadata: { name: updated.name },
     })
 
+    revalidateAfterArtisteMutation({ slug: updated.slug, previousSlug: existing?.slug })
+
     return NextResponse.json({ data: updated })
   } catch (error) {
     console.error('PUT /api/artistes/[id] failed', error)
@@ -64,6 +71,10 @@ export async function DELETE(
     if (auth.errorResponse) return auth.errorResponse
 
     const { id } = await params
+    const existing = await prisma.artiste.findUnique({
+      where: { id },
+      select: { slug: true },
+    })
 
     await prisma.artiste.delete({ where: { id } })
 
@@ -74,6 +85,8 @@ export async function DELETE(
       entity: 'ARTISTE',
       entityId: id,
     })
+
+    revalidateAfterArtisteMutation({ previousSlug: existing?.slug })
 
     return NextResponse.json({ ok: true })
   } catch (error) {

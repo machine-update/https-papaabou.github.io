@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { partenaireSchema } from '@/lib/validation'
 import { guardRateLimit, requireAdmin } from '@/lib/api-guard'
 import { logAdminActivity } from '@/lib/admin-activity'
+import { revalidateGlobalPublicContent } from '@/lib/public-revalidate'
 
 export async function PUT(
   request: NextRequest,
@@ -47,6 +48,8 @@ export async function PUT(
       metadata: { name: updated.name },
     })
 
+    revalidateGlobalPublicContent()
+
     return NextResponse.json({ data: updated })
   } catch (error) {
     console.error('PUT /api/partenaires/[id] failed', error)
@@ -76,6 +79,8 @@ export async function DELETE(
       entity: 'PARTENAIRE',
       entityId: id,
     })
+
+    revalidateGlobalPublicContent()
 
     return NextResponse.json({ ok: true })
   } catch (error) {
