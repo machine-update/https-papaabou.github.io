@@ -1,7 +1,6 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 type LoginFormProps = {
   nextPath: string
@@ -9,13 +8,11 @@ type LoginFormProps = {
 }
 
 export function LoginForm({ nextPath, forbidden }: LoginFormProps) {
-  const router = useRouter()
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(
-    forbidden ? 'Accès réservé aux administrateurs.' : null,
+    forbidden ? 'Acces reserve aux administrateurs.' : null,
   )
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -27,19 +24,18 @@ export function LoginForm({ nextPath, forbidden }: LoginFormProps) {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       })
 
       if (!response.ok) {
-        const payload = await response.json().catch(() => ({ error: 'Login failed' }))
-        throw new Error(payload.error || 'Login failed')
+        const payload = await response.json().catch(() => ({ error: 'Connexion echouee' }))
+        throw new Error(payload.error || 'Connexion echouee')
       }
 
-      router.push(nextPath)
-      router.refresh()
+      window.location.assign(nextPath || '/admin')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unexpected error')
-    } finally {
+      setError(err instanceof Error ? err.message : 'Erreur inattendue')
       setLoading(false)
     }
   }
@@ -79,7 +75,7 @@ export function LoginForm({ nextPath, forbidden }: LoginFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="h-11 w-full rounded-xl bg-[#f19b32] font-medium text-black transition hover:brightness-110 disabled:opacity-60"
+        className="h-11 w-full rounded-xl bg-[#f19b32] font-medium text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? 'Connexion...' : 'Se connecter'}
       </button>
