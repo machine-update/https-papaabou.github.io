@@ -1,3 +1,16 @@
+import {
+  Activity,
+  BarChart3,
+  Clapperboard,
+  Globe2,
+  Mic2,
+  Radio,
+  Sparkles,
+  Tv,
+  UserRound,
+  Users,
+  type LucideIcon,
+} from 'lucide-react'
 import { BarChart } from './components/charts/bar-chart'
 import { DonutChart } from './components/charts/donut-chart'
 import { LineChart } from './components/charts/line-chart'
@@ -71,6 +84,24 @@ export default async function AdminDashboardPage({
     },
   ]
 
+  const dashboardTabs = [
+    { label: 'Vue générale', icon: BarChart3 },
+    { label: 'Productions', icon: Clapperboard },
+    { label: 'Artistes', icon: Mic2 },
+    { label: 'Partenaires', icon: Users },
+    { label: 'Audience', icon: Globe2 },
+    { label: 'Analytics', icon: Activity },
+  ]
+
+  const topByViews = data.contentPerformance.topByViews.slice(0, 10)
+  const featuredContents = topByViews.slice(0, 5)
+  const audiencePoints = [
+    { x: '18%', y: '42%', size: 'h-5 w-5', tone: 'bg-emerald-400/85' },
+    { x: '39%', y: '22%', size: 'h-4 w-4', tone: 'bg-emerald-300/70' },
+    { x: '63%', y: '30%', size: 'h-3 w-3', tone: 'bg-emerald-300/60' },
+    { x: '72%', y: '58%', size: 'h-5 w-5', tone: 'bg-emerald-400/80' },
+  ]
+
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -84,6 +115,29 @@ export default async function AdminDashboardPage({
           <ExportPdfButton />
         </div>
       </div>
+
+      <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-2">
+        <div className="flex flex-wrap gap-2">
+          {dashboardTabs.map((tab, index) => {
+            const Icon = tab.icon
+            const active = index === 0
+            return (
+              <button
+                key={tab.label}
+                type="button"
+                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${
+                  active
+                    ? 'border-white/25 bg-white/10 text-white'
+                    : 'border-transparent text-white/70 hover:border-white/15 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{tab.label}</span>
+              </button>
+            )
+          })}
+        </div>
+      </section>
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {data.alerts.map((alert) => (
@@ -101,12 +155,108 @@ export default async function AdminDashboardPage({
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {headCounters.map((stat) => (
-          <article key={stat.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.45)]">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/55">{stat.label}</p>
-            <p className="mt-3 text-4xl font-semibold text-[#f19b32]">{stat.value}</p>
-          </article>
-        ))}
+        {headCounters.map((stat) => {
+          const iconMap: Record<string, LucideIcon> = {
+            Productions: Clapperboard,
+            Artistes: Mic2,
+            Partenaires: Users,
+            Utilisateurs: UserRound,
+          }
+          const colorMap: Record<string, string> = {
+            Productions: 'text-violet-300 bg-violet-500/15 border-violet-400/25',
+            Artistes: 'text-cyan-300 bg-cyan-500/15 border-cyan-400/25',
+            Partenaires: 'text-amber-300 bg-amber-500/15 border-amber-400/25',
+            Utilisateurs: 'text-emerald-300 bg-emerald-500/15 border-emerald-400/25',
+          }
+          const Icon = iconMap[stat.label] ?? Sparkles
+          const tone = colorMap[stat.label] ?? 'text-[#f19b32] bg-[#f19b32]/15 border-[#f19b32]/30'
+
+          return (
+            <article
+              key={stat.label}
+              className="group rounded-2xl border border-white/10 bg-[#131313] p-5 shadow-[0_20px_48px_rgba(0,0,0,0.45)] transition duration-300 hover:-translate-y-0.5 hover:border-white/20"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/55">{stat.label}</p>
+                  <p className="mt-3 text-4xl font-semibold text-white">{stat.value}</p>
+                </div>
+                <span className={`inline-flex h-11 w-11 items-center justify-center rounded-xl border ${tone}`}>
+                  <Icon className="h-5 w-5" />
+                </span>
+              </div>
+            </article>
+          )
+        })}
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1.35fr_1fr]">
+        <article className="rounded-2xl border border-white/10 bg-[#131313] p-5 shadow-[0_20px_48px_rgba(0,0,0,0.45)]">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#f19b32]">Visites du site web</p>
+              <h3 className="mt-1 text-xl font-semibold">Visualiser les visiteurs par zones</h3>
+            </div>
+            <div className="inline-flex rounded-xl border border-white/10 bg-black/30 p-1 text-xs">
+              {['Aujourd’hui', '7J', '30J'].map((range, idx) => (
+                <span
+                  key={range}
+                  className={`rounded-lg px-3 py-1 ${idx === 2 ? 'bg-white/10 text-white' : 'text-white/65'}`}
+                >
+                  {range}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="relative mt-4 h-[250px] overflow-hidden rounded-xl border border-white/10 bg-black/30">
+            <div className="absolute left-4 top-4 rounded-xl border border-white/10 bg-black/80 p-3">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-white/60">Visiteurs</p>
+              <p className="mt-1 text-3xl font-semibold text-white">{data.executiveOverview.monthlyPublications.value}</p>
+              <p className="text-xs text-emerald-300">+{Math.max(data.executiveOverview.growthRate.value, 0).toFixed(1)}% vs période précédente</p>
+            </div>
+            {audiencePoints.map((point) => (
+              <span
+                key={`${point.x}-${point.y}`}
+                className={`absolute ${point.size} ${point.tone} rounded-full shadow-[0_0_22px_rgba(16,185,129,0.55)]`}
+                style={{ left: point.x, top: point.y }}
+              />
+            ))}
+            <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/70 px-3 py-1 text-xs text-white/70">
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+              Top audience
+            </div>
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-white/10 bg-[#131313] p-5 shadow-[0_20px_48px_rgba(0,0,0,0.45)]">
+          <p className="text-xs uppercase tracking-[0.18em] text-[#f19b32]">Contenus Top 10</p>
+          <h3 className="mt-1 text-xl font-semibold">Classement par vues</h3>
+          <div className="mt-4 space-y-2">
+            {topByViews.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-white/20 bg-black/30 p-4 text-sm text-white/60">
+                Aucune donnée disponible.
+              </p>
+            ) : (
+              topByViews.map((item, idx) => (
+                <article
+                  key={`${item.label}-${idx}`}
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-3 py-2"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-sm font-semibold text-white/85">
+                      {idx + 1}
+                    </span>
+                    <p className="text-sm text-white/90">{item.label}</p>
+                  </div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-2.5 py-1 text-xs text-white/70">
+                    <Tv className="h-3.5 w-3.5" />
+                    {item.value}
+                  </div>
+                </article>
+              ))
+            )}
+          </div>
+        </article>
       </section>
 
       <section className="rounded-2xl border border-[#f19b32]/30 bg-gradient-to-br from-[#0f0f0f] to-black p-5 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
@@ -137,6 +287,43 @@ export default async function AdminDashboardPage({
         <LineChart title="Évolution des vues" subtitle="Vues réelles par mois" data={data.charts.viewsSeries} />
       </section>
 
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_1fr]">
+        <article className="rounded-2xl border border-white/10 bg-[#131313] p-5 shadow-[0_20px_48px_rgba(0,0,0,0.45)]">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#f19b32]">Contenus Vedette</p>
+              <h3 className="mt-1 text-xl font-semibold">Sélection premium</h3>
+            </div>
+            <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-white/65">
+              {featuredContents.length} éléments
+            </span>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            {featuredContents.length === 0 ? (
+              <p className="sm:col-span-2 xl:col-span-5 rounded-xl border border-dashed border-white/20 bg-black/30 p-4 text-sm text-white/60">
+                Aucun contenu vedette pour le moment.
+              </p>
+            ) : (
+              featuredContents.map((item, idx) => (
+                <article
+                  key={`${item.label}-${idx}`}
+                  className="rounded-xl border border-white/10 bg-black/35 p-3 transition duration-300 hover:-translate-y-0.5 hover:border-white/20"
+                >
+                  <div className="inline-flex rounded-full border border-white/20 px-2 py-0.5 text-[11px] text-white/70">#{idx + 1}</div>
+                  <p className="mt-3 line-clamp-2 text-sm font-medium text-white/90">{item.label}</p>
+                  <div className="mt-2 inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[11px] text-emerald-300">
+                    <Radio className="h-3.5 w-3.5" />
+                    {item.value} vues
+                  </div>
+                </article>
+              ))
+            )}
+          </div>
+        </article>
+
+        <DonutChart title="Répartition des médias" subtitle="Distribution par type de contenu" data={data.charts.statusOverview} />
+      </section>
+
       <section className="grid gap-4 xl:grid-cols-2">
         <article className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
           <div className="mb-4 flex items-center justify-between">
@@ -165,7 +352,6 @@ export default async function AdminDashboardPage({
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <BarChart title="Artistes par région" data={data.studioMap.artistsByRegion} />
             <BarChart title="Partenaires par région" data={data.studioMap.partnersByRegion} />
-            <BarChart title="Productions par pays" data={data.studioMap.productionsByCountry} />
           </div>
         </article>
 
