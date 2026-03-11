@@ -45,6 +45,12 @@ const escapeHtml = (value: string) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;')
 
+const parseRecipientList = (value?: string) =>
+  (value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+
 const buildHtmlBody = (data: Required<Pick<ContactPayload, 'fullName' | 'email' | 'message'>> & ContactPayload) => {
   const rows = [
     ['Nom', data.fullName],
@@ -75,10 +81,10 @@ const buildHtmlBody = (data: Required<Pick<ContactPayload, 'fullName' | 'email' 
 
 const sendContactEmail = async (data: Required<Pick<ContactPayload, 'fullName' | 'email' | 'message'>> & ContactPayload) => {
   const apiKey = process.env.RESEND_API_KEY
-  const to = process.env.CONTACT_TO_EMAIL
+  const to = parseRecipientList(process.env.CONTACT_TO_EMAIL)
   const from = process.env.CONTACT_FROM_EMAIL || 'XKSPROD <onboarding@resend.dev>'
 
-  if (!apiKey || !to) {
+  if (!apiKey || to.length === 0) {
     return { sent: false, reason: 'missing_config' as const }
   }
 
@@ -90,7 +96,7 @@ const sendContactEmail = async (data: Required<Pick<ContactPayload, 'fullName' |
     },
     body: JSON.stringify({
       from,
-      to: [to],
+      to,
       reply_to: data.email,
       subject: `Nouveau lead: ${data.fullName}`,
       html: buildHtmlBody(data),

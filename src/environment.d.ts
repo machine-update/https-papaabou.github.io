@@ -11,6 +11,7 @@ declare global {
       TURNSTILE_SECRET_KEY?: string
       RESEND_API_KEY?: string
       CONTACT_TO_EMAIL?: string
+      CASTING_TO_EMAIL?: string
       CONTACT_FROM_EMAIL?: string
     }
   }

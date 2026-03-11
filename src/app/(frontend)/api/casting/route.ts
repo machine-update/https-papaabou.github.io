@@ -46,6 +46,12 @@ const escapeHtml = (value: string) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;')
 
+const parseRecipientList = (value?: string) =>
+  (value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+
 const buildHtmlBody = (data: CastingPayload) => {
   const rows = [
     ['Nom', data.fullName],
@@ -77,10 +83,10 @@ const buildHtmlBody = (data: CastingPayload) => {
 
 const sendCastingEmail = async (data: CastingPayload) => {
   const apiKey = process.env.RESEND_API_KEY
-  const to = process.env.CASTING_TO_EMAIL || process.env.CONTACT_TO_EMAIL
+  const to = parseRecipientList(process.env.CASTING_TO_EMAIL || process.env.CONTACT_TO_EMAIL)
   const from = process.env.CONTACT_FROM_EMAIL || 'XKSPROD <onboarding@resend.dev>'
 
-  if (!apiKey || !to) {
+  if (!apiKey || to.length === 0) {
     return { sent: false, reason: 'missing_config' as const }
   }
 
@@ -92,7 +98,7 @@ const sendCastingEmail = async (data: CastingPayload) => {
     },
     body: JSON.stringify({
       from,
-      to: [to],
+      to,
       reply_to: data.email,
       subject: `Casting: ${data.fullName} ${data.firstName}`,
       html: buildHtmlBody(data),

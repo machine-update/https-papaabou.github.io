@@ -8,6 +8,14 @@ import {
 } from '@/data/productions'
 import { prisma } from '@/lib/prisma'
 
+const PUBLIC_CONTENT_SOURCE = (process.env.PUBLIC_CONTENT_SOURCE ?? 'static').toLowerCase()
+
+let adminDbAvailability: 'unknown' | 'available' | 'unavailable' =
+  PUBLIC_CONTENT_SOURCE === 'admin-db' && process.env.ADMIN_DATABASE_URL?.trim()
+    ? 'unknown'
+    : 'unavailable'
+let adminDbWarningShown = false
+
 type PublicProductionItem = {
   id: string
   title: string
@@ -46,6 +54,44 @@ const fallbackPrestations: PublicPrestation[] = [
     tags: ['Scénographie', 'Live', 'Show', 'Immersif'],
   },
 ]
+
+function logAdminDbFallback(context: string, error?: unknown) {
+  adminDbAvailability = 'unavailable'
+
+  if (adminDbWarningShown) {
+    return
+  }
+
+  adminDbWarningShown = true
+
+  if (process.env.NODE_ENV === 'development') {
+    const detail = error instanceof Error ? error.message : 'unknown error'
+    console.warn(`[public-content] Admin DB unavailable in ${context}, using static fallback: ${detail}`)
+  }
+}
+
+async function canUseAdminDb() {
+  if (PUBLIC_CONTENT_SOURCE !== 'admin-db') {
+    return false
+  }
+
+  if (adminDbAvailability === 'available') {
+    return true
+  }
+
+  if (adminDbAvailability === 'unavailable') {
+    return false
+  }
+
+  try {
+    await prisma.$queryRaw`SELECT 1`
+    adminDbAvailability = 'available'
+    return true
+  } catch (error) {
+    logAdminDbFallback('healthcheck', error)
+    return false
+  }
+}
 
 function toSlug(input: string) {
   return input
@@ -103,6 +149,10 @@ function mapDbArtistToPublic(item: {
 }
 
 export async function getPublicArtists() {
+  if (!(await canUseAdminDb())) {
+    return artists
+  }
+
   try {
     const dbArtists = await prisma.artiste.findMany({
       orderBy: { createdAt: 'desc' },
@@ -128,7 +178,7 @@ export async function getPublicArtists() {
       return [...mappedDb, ...legacyStillNeeded]
     }
   } catch (error) {
-    console.error('getPublicArtists fallback to static data', error)
+    logAdminDbFallback('getPublicArtists', error)
   }
 
   return artists
@@ -145,6 +195,17 @@ export async function getPublicFeaturedArtists() {
 }
 
 export async function getPublicProductionsByDossierSlug(slug: string): Promise<PublicProductionItem[]> {
+  if (!(await canUseAdminDb())) {
+    return getProductionsByDossierSlug(slug).map((item) => ({
+      id: String(item.id),
+      title: item.title,
+      meta: item.meta,
+      desc: item.desc,
+      image: item.image,
+      dossierSlug: item.dossierSlug,
+    }))
+  }
+
   try {
     const all = await prisma.production.findMany({
       orderBy: { createdAt: 'desc' },
@@ -178,7 +239,7 @@ export async function getPublicProductionsByDossierSlug(slug: string): Promise<P
       return [...fromDb, ...missingStatic]
     }
   } catch (error) {
-    console.error('getPublicProductionsByDossierSlug fallback to static data', error)
+    logAdminDbFallback('getPublicProductionsByDossierSlug', error)
   }
 
   return getProductionsByDossierSlug(slug).map((item) => ({
@@ -192,6 +253,17 @@ export async function getPublicProductionsByDossierSlug(slug: string): Promise<P
 }
 
 export async function getPublicProductionDossiers(): Promise<PublicProductionDossier[]> {
+  if (!(await canUseAdminDb())) {
+    return productionDossiers.map((dossier) => {
+      const items = getProductionsByDossierSlug(dossier.slug)
+      return {
+        ...dossier,
+        count: items.length,
+        coverImage: items[0]?.image || staticProductions[0]?.image || '/home/works/prod1.jpg',
+      }
+    })
+  }
+
   try {
     const all = await prisma.production.findMany({
       orderBy: { createdAt: 'desc' },
@@ -263,7 +335,7 @@ export async function getPublicProductionDossiers(): Promise<PublicProductionDos
       }))
     }
   } catch (error) {
-    console.error('getPublicProductionDossiers fallback to static data', error)
+    logAdminDbFallback('getPublicProductionDossiers', error)
   }
 
   return productionDossiers.map((dossier) => {
@@ -277,6 +349,10 @@ export async function getPublicProductionDossiers(): Promise<PublicProductionDos
 }
 
 export async function getPublicPartenaires() {
+  if (!(await canUseAdminDb())) {
+    return fallbackPartners
+  }
+
   try {
     const data = await prisma.partenaire.findMany({
       orderBy: { createdAt: 'desc' },
@@ -296,13 +372,17 @@ export async function getPublicPartenaires() {
       }))
     }
   } catch (error) {
-    console.error('getPublicPartenaires fallback to static data', error)
+    logAdminDbFallback('getPublicPartenaires', error)
   }
 
   return fallbackPartners
 }
 
 export async function getPublicPrestations() {
+  if (!(await canUseAdminDb())) {
+    return fallbackPrestations
+  }
+
   try {
     const data = await prisma.prestation.findMany({
       orderBy: { createdAt: 'desc' },
@@ -320,7 +400,7 @@ export async function getPublicPrestations() {
       }))
     }
   } catch (error) {
-    console.error('getPublicPrestations fallback to static data', error)
+    logAdminDbFallback('getPublicPrestations', error)
   }
 
   return fallbackPrestations

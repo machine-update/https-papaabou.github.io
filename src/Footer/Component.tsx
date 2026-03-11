@@ -7,7 +7,7 @@ import type { Footer } from '@/payload-types'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
-import { Instagram, Linkedin, Youtube } from 'lucide-react'
+import { Facebook, Instagram, Youtube } from 'lucide-react'
 
 export async function Footer() {
   let footerData: Footer
@@ -36,9 +36,9 @@ export async function Footer() {
     { label: 'CGV', href: '/cgv' },
   ]
   const socialLinks = [
-    { label: 'Instagram', href: 'https://instagram.com', icon: Instagram },
-    { label: 'YouTube', href: 'https://youtube.com', icon: Youtube },
-    { label: 'LinkedIn', href: 'https://linkedin.com', icon: Linkedin },
+    { label: 'Instagram', href: 'https://www.instagram.com/xksprod/', icon: Instagram },
+    { label: 'YouTube', href: 'https://www.youtube.com/@XKSPROD', icon: Youtube },
+    { label: 'Facebook', href: 'https://facebook.com/XKSprodEntertainment', icon: Facebook },
   ]
   const currentYear = new Date().getFullYear()
 
